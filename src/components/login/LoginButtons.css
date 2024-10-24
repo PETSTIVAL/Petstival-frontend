@@ -1,0 +1,11 @@
+.login-button{
+    width: 326px;
+    height: 62px;   
+    display: flex;  
+    justify-content: center; 
+    align-items: center; 
+    border: none; 
+    padding: 0;   
+    cursor: pointer; 
+    background-color: #F9F9F9;
+}

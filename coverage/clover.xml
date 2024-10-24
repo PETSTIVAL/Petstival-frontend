@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1729406793406" clover="3.2.0">
-  <project timestamp="1729406793406" name="All files">
-    <metrics statements="36" coveredstatements="34" conditionals="8" coveredconditionals="8" methods="9" coveredmethods="8" elements="53" coveredelements="50" complexity="0" loc="36" ncloc="36" packages="1" files="6" classes="6"/>
-    <file name="mockFunctions.js" path="/Users/kimdayeon/Documents/REACT/petstival/frontend/test/mockFunctions.js">
+<coverage generated="1729788166823" clover="3.2.0">
+  <project timestamp="1729788166823" name="All files">
+    <metrics statements="36" coveredstatements="34" conditionals="9" coveredconditionals="9" methods="10" coveredmethods="8" elements="55" coveredelements="51" complexity="0" loc="36" ncloc="36" packages="1" files="6" classes="6"/>
+    <file name="mockFunctions.js" path="/Users/kimdayeon/Documents/REACT/petstival/frontend/test/study/mockFunctions.js">
       <metrics statements="5" coveredstatements="5" conditionals="1" coveredconditionals="1" methods="1" coveredmethods="1"/>
       <line num="1" count="1" type="stmt"/>
       <line num="2" count="1" type="cond" truecount="1" falsecount="0"/>
@@ -10,24 +10,24 @@
       <line num="4" count="1" type="stmt"/>
       <line num="5" count="1" type="stmt"/>
     </file>
-    <file name="throwFunction.js" path="/Users/kimdayeon/Documents/REACT/petstival/frontend/test/throwFunction.js">
-      <metrics statements="8" coveredstatements="6" conditionals="1" coveredconditionals="1" methods="2" coveredmethods="1"/>
+    <file name="throwFunction.js" path="/Users/kimdayeon/Documents/REACT/petstival/frontend/test/study/throwFunction.js">
+      <metrics statements="8" coveredstatements="6" conditionals="2" coveredconditionals="2" methods="3" coveredmethods="1"/>
       <line num="1" count="1" type="cond" truecount="1" falsecount="0"/>
       <line num="2" count="1" type="stmt"/>
       <line num="3" count="1" type="stmt"/>
       <line num="4" count="1" type="stmt"/>
-      <line num="5" count="1" type="stmt"/>
+      <line num="5" count="1" type="cond" truecount="1" falsecount="0"/>
       <line num="6" count="1" type="stmt"/>
       <line num="7" count="0" type="stmt"/>
       <line num="8" count="0" type="stmt"/>
     </file>
-    <file name="toBe.js" path="/Users/kimdayeon/Documents/REACT/petstival/frontend/test/toBe.js">
+    <file name="toBe.js" path="/Users/kimdayeon/Documents/REACT/petstival/frontend/test/study/toBe.js">
       <metrics statements="3" coveredstatements="3" conditionals="1" coveredconditionals="1" methods="1" coveredmethods="1"/>
       <line num="1" count="1" type="cond" truecount="1" falsecount="0"/>
       <line num="2" count="1" type="stmt"/>
       <line num="3" count="1" type="stmt"/>
     </file>
-    <file name="toHaveBeenCalled.js" path="/Users/kimdayeon/Documents/REACT/petstival/frontend/test/toHaveBeenCalled.js">
+    <file name="toHaveBeenCalled.js" path="/Users/kimdayeon/Documents/REACT/petstival/frontend/test/study/toHaveBeenCalled.js">
       <metrics statements="9" coveredstatements="9" conditionals="2" coveredconditionals="2" methods="2" coveredmethods="2"/>
       <line num="1" count="1" type="cond" truecount="1" falsecount="0"/>
       <line num="2" count="3" type="stmt"/>
@@ -39,7 +39,7 @@
       <line num="8" count="2" type="stmt"/>
       <line num="9" count="1" type="stmt"/>
     </file>
-    <file name="toMatchObject.js" path="/Users/kimdayeon/Documents/REACT/petstival/frontend/test/toMatchObject.js">
+    <file name="toMatchObject.js" path="/Users/kimdayeon/Documents/REACT/petstival/frontend/test/study/toMatchObject.js">
       <metrics statements="8" coveredstatements="8" conditionals="2" coveredconditionals="2" methods="2" coveredmethods="2"/>
       <line num="1" count="1" type="stmt"/>
       <line num="2" count="1" type="cond" truecount="1" falsecount="0"/>
@@ -50,7 +50,7 @@
       <line num="7" count="2" type="stmt"/>
       <line num="8" count="2" type="stmt"/>
     </file>
-    <file name="toStrictEqual.js" path="/Users/kimdayeon/Documents/REACT/petstival/frontend/test/toStrictEqual.js">
+    <file name="toStrictEqual.js" path="/Users/kimdayeon/Documents/REACT/petstival/frontend/test/study/toStrictEqual.js">
       <metrics statements="3" coveredstatements="3" conditionals="1" coveredconditionals="1" methods="1" coveredmethods="1"/>
       <line num="1" count="1" type="cond" truecount="1" falsecount="0"/>
       <line num="2" count="2" type="stmt"/>

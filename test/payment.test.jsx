@@ -14,7 +14,7 @@ vi.mock('uuid', () => ({
   v4: vi.fn(),
 }));
 
-// 
+// Supabase createClient를 모킹하여 실제 API 호출이 없도록 테스트
 vi.mock('@supabase/supabase-js', () => {
   const mockSupabaseClient = {
     from: vi.fn().mockReturnThis(),
@@ -67,7 +67,7 @@ describe('결제 세션 초기화', () => {
 });
 
 describe('결제 세부정보', () => {
-  it('결제 요청 시 올바른 결제 세부 정보를 보내야 합니다. (주문Id, 주문이름, 주문자이름, 주문자이메일, 주문자휴대폰번호, 성공시 url, 실패시 url)', async () => {
+  it('결제 요청 시 올바른 결제 세부 정보를 보내야 한다. (주문Id, 주문이름, 주문자이름, 주문자이메일, 주문자휴대폰번호, 성공시 url, 실패시 url)', async () => {
     const mockRequestPayment = vi.fn();
     const mockWidgets = {
       requestPayment: mockRequestPayment,
@@ -106,6 +106,29 @@ describe('결제 세부정보', () => {
         successUrl: expect.stringContaining('/success'),
         failUrl: expect.stringContaining('/fail'),
       });
+    });
+  });
+});
+
+describe('CheckoutPage 데이터베이스 저장', () => {
+  it('DB에 주문ID, 결제ID, 금액이 저장된다.', async () => {
+    // Supabase mock 및 데이터 설정
+    const mockSupabaseClient = createClient();
+    const mockOrderId = 'test-order-id';
+    const mockAmountValue = 50000;
+
+    // Supabase의 upsert 메소드에 대한 모킹 반환값 설정
+    mockSupabaseClient.upsert.mockResolvedValue({ data: {}, error: null });
+
+    // 페이지 렌더링 및 결제 정보 업로드 함수 호출
+    render(<CheckoutPage />);
+
+    // postTestData 호출을 테스트할 수 있도록 테스트용으로 만들어진 orderId, amount 값으로 호출
+    await waitFor(() => {
+      expect(mockSupabaseClient.from).toHaveBeenCalledWith('payment');
+      expect(mockSupabaseClient.upsert).toHaveBeenCalledWith([
+        { orderId: mockOrderId, amount: mockAmountValue, order_id: expect.any(String) },
+      ]);
     });
   });
 });

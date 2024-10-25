@@ -36,5 +36,18 @@ describe('Payment Tests', () => {
     // "결제하기" 버튼 클릭되었는지 확인
     const payButton = getByText('결제하기');
     fireEvent.click(payButton);
+
+    // 비동기 위젯 렌더링 대기
+    await waitFor(() => {
+      expect(mockWidgets.setAmount).toHaveBeenCalledWith({ currency: 'KRW', value: 50000 });
+      expect(mockWidgets.renderPaymentMethods).toHaveBeenCalledWith({
+        selector: '#payment-method',
+        variantKey: 'DEFAULT',
+      });
+      expect(mockWidgets.renderAgreement).toHaveBeenCalledWith({
+        selector: '#agreement',
+        variantKey: 'AGREEMENT',
+      });
+    });
   });
 });

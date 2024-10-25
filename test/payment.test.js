@@ -12,3 +12,20 @@ jest.mock('@tosspayments/tosspayments-sdk', () => ({
 jest.mock('uuid', () => ({
   v4: jest.fn(),
 }));
+
+describe('결제 세션 초기화', () => {
+  it('토스 페이먼츠 위젯과 함께 결제 세션이 초기화된다.', async () => {
+    // UUID 생성 및 TossPayments 동작 Mock
+    uuidv4.mockReturnValue('test-customer-key');
+    const mockWidgets = {
+      setAmount: jest.fn(),
+      renderPaymentMethods: jest.fn(),
+      renderAgreement: jest.fn(),
+    };
+
+    // TossPayments API 호출을 모킹하여 모킹 위젯을 반환
+    loadTossPayments.mockResolvedValue({
+      widgets: () => mockWidgets,
+    });
+  });
+});

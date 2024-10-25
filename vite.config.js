@@ -4,8 +4,7 @@ import svgr from 'vite-plugin-svgr';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [{ enforce: 'pre', ...mdx() },
-    react({ include: /\.(mdx|js|jsx|ts|tsx)$/ }), svgr()],
+  plugins: [react(), svgr()],
   server: {
     proxy: {
       '/api': {
@@ -21,5 +20,4 @@ export default defineConfig({
     environment: "jsdom",
     setupFiles: "./test/setup.js",
   },
-  
 });

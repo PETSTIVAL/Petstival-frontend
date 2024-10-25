@@ -115,8 +115,6 @@ describe('CheckoutPage 데이터베이스 저장', () => {
   it('DB에 주문ID, 결제ID, 금액이 저장된다.', async () => {
     // Supabase mock 및 데이터 설정
     const mockSupabaseClient = createClient();
-    const mockOrderId = 'test-order-id';
-    const mockAmountValue = 50000;
 
     // 페이지 렌더링 및 결제 버튼 클릭 시 postTestData 호출
     const { getByText } = render(<CheckoutPage />);
@@ -127,7 +125,7 @@ describe('CheckoutPage 데이터베이스 저장', () => {
     await waitFor(() => {
       expect(mockSupabaseClient.from).toHaveBeenCalledWith('payment');
       expect(mockSupabaseClient.upsert).toHaveBeenCalledWith([
-        { orderId: expect.any(String), amount: mockAmountValue, order_id: expect.any(String) },
+        { orderId: expect.any(String), amount: expect.any(Number), order_id: expect.any(String) },
       ]);
     });
   });

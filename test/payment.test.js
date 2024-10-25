@@ -30,5 +30,9 @@ describe('결제 세션 초기화', () => {
 
     // CheckoutPage 컴포넌트 렌더링되는지 확인
     const { getByText } = render(<CheckoutPage />);
+
+    // "결제하기" 버튼 클릭되었는지 확인 
+    const payButton = getByText('결제하기');
+    fireEvent.click(payButton);
   });
 });

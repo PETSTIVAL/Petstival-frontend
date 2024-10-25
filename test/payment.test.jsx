@@ -1,6 +1,5 @@
 import CheckoutPage from '../src/pages/PaymentsPage/CheckoutPage.jsx';
-import { describe, it, expect } from 'vitest';
-import { render } from '@testing-library/react';
+import { render, fireEvent, waitFor } from '@testing-library/react';
 import { loadTossPayments } from '@tosspayments/tosspayments-sdk';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -15,7 +14,7 @@ vi.mock('@tosspayments/tosspayments-sdk', () => ({
   }));
 
 describe('Payment Tests', () => {
-  it('토스 페이먼츠 위젯과 함께 결제 세션이 초기화된다.', () => {
+  it('토스 페이먼츠 위젯과 함께 결제 세션이 초기화된다.', async () => {
     // UUID 생성 및 TossPayments 동작 Mock
     uuidv4.mockReturnValue('test-customer-key');
     const mockWidgets = {
@@ -49,7 +48,7 @@ describe('Payment Tests', () => {
         variantKey: 'AGREEMENT',
       });
     });
-    
+
     // TossPayments가 올바른 clientKey로 초기화되었는지 확인
     expect(loadTossPayments).toHaveBeenCalledWith(expect.any(String)); // clientKey 인수를 받아서 호출되고 있는지 확인
     expect(uuidv4).toHaveBeenCalled(); // Customer key가 생성되었는지 확인

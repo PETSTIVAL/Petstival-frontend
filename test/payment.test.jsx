@@ -2,6 +2,7 @@ import CheckoutPage from '../src/pages/PaymentsPage/CheckoutPage.jsx';
 import { render, fireEvent, waitFor } from '@testing-library/react';
 import { loadTossPayments } from '@tosspayments/tosspayments-sdk';
 import { v4 as uuidv4 } from 'uuid';
+import { createClient } from '@supabase/supabase-js';
 
 // loadTossPayments 함수를 모킹하여 결제 위젯을 반환
 vi.mock('@tosspayments/tosspayments-sdk', () => ({
@@ -12,6 +13,17 @@ vi.mock('@tosspayments/tosspayments-sdk', () => ({
 vi.mock('uuid', () => ({
   v4: vi.fn(),
 }));
+
+// 
+vi.mock('@supabase/supabase-js', () => {
+  const mockSupabaseClient = {
+    from: vi.fn().mockReturnThis(),
+    upsert: vi.fn(),
+  };
+  return {
+    createClient: () => mockSupabaseClient,
+  };
+});
 
 describe('결제 세션 초기화', () => {
   it('토스 페이먼츠 위젯과 함께 결제 세션이 초기화된다.', async () => {

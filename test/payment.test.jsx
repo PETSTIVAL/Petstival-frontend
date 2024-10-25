@@ -49,5 +49,8 @@ describe('Payment Tests', () => {
         variantKey: 'AGREEMENT',
       });
     });
+    // TossPayments가 올바른 clientKey로 초기화되었는지 확인
+    expect(loadTossPayments).toHaveBeenCalledWith(expect.any(String)); // clientKey 인수를 받아서 호출되고 있는지 확인
+    expect(uuidv4).toHaveBeenCalled(); // Customer key가 생성되었는지 확인
   });
 });

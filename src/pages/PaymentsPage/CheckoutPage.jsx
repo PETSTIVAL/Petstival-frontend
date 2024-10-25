@@ -15,6 +15,17 @@ function CheckoutPage() {
         const customerKey = uuidv4();
         const widgets = tossPayments.widgets({ customerKey });
 
+        // 리팩토링
+        widgets.setAmount({ currency: 'KRW', value: 50000 }); // 초기값
+        widgets.renderPaymentMethods({
+          selector: '#payment-method',
+          variantKey: 'DEFAULT',
+        });
+        widgets.renderAgreement({
+          selector: '#agreement',
+          variantKey: 'AGREEMENT',
+        });
+
         setWidgets(widgets);
       } catch (error) {
         console.error('Error initializing payment session:', error);
@@ -24,20 +35,6 @@ function CheckoutPage() {
     fetchPaymentWidgets();
   }, []);
 
-  useEffect(() => {
-    if (widgets) {
-      widgets.setAmount({ currency: 'KRW', value: 50000 }); // 초기값
-      widgets.renderPaymentMethods({
-        selector: '#payment-method',
-        variantKey: 'DEFAULT',
-      });
-      widgets.renderAgreement({
-        selector: '#agreement',
-        variantKey: 'AGREEMENT',
-      });
-    }
-  }, [widgets]);
-
   return (
     <div>
       <div id="payment-method" />
@@ -45,16 +42,16 @@ function CheckoutPage() {
       <button
         className="btn primary w-100"
         onClick={async () => {
-            const orderId = uuidv4();
-            await widgets?.requestPayment({
-              orderId: orderId,
-              orderName: '토스 티셔츠 외 2건',
-              customerName: '김토스',
-              customerEmail: 'customer123@gmail.com',
-              customerMobilePhone: '01012341234',
-              successUrl: window.location.origin + '/success',
-              failUrl: window.location.origin + '/fail',
-            });
+          const orderId = uuidv4();
+          await widgets?.requestPayment({
+            orderId: orderId,
+            orderName: '토스 티셔츠 외 2건',
+            customerName: '김토스',
+            customerEmail: 'customer123@gmail.com',
+            customerMobilePhone: '01012341234',
+            successUrl: window.location.origin + '/success',
+            failUrl: window.location.origin + '/fail',
+          });
         }}
       >
         결제하기

@@ -27,5 +27,8 @@ describe('결제 세션 초기화', () => {
     loadTossPayments.mockResolvedValue({
       widgets: () => mockWidgets,
     });
+
+    // CheckoutPage 컴포넌트 렌더링되는지 확인
+    const { getByText } = render(<CheckoutPage />);
   });
 });

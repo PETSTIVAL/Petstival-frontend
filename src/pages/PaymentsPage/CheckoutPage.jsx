@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react';
 import { loadTossPayments } from '@tosspayments/tosspayments-sdk';
 import { v4 as uuidv4 } from 'uuid';
+import { createClient } from '@supabase/supabase-js';
+
 import './style.css';
 
 const clientKey = import.meta.env.VITE_CLIENT_SECRET_KEY;
+const supabase = createClient(import.meta.env.VITE_SUPABASE_API_URL, import.meta.env.VITE_SUPABASE_API_KEY);
 
 function CheckoutPage() {
   const [widgets, setWidgets] = useState(null);
@@ -35,6 +38,22 @@ function CheckoutPage() {
     fetchPaymentWidgets();
   }, []);
 
+    // supabase DB에 저장
+    const postTestData = async (orderId, amountValue) => {
+      const dataToPost = {
+        orderId: orderId,
+        amount: amountValue,
+        order_id: "d4c8b0f7-62f4-4a63-90e7-5af0a5d9e4c6",
+      };
+      // payment table에 정보를 업데이트
+      const { data, error } = await supabase.from('payment').upsert([dataToPost]);
+  
+      if (error) {
+        console.error('Error posting data:', error);
+        return;
+      }
+    };
+
   return (
     <div>
       <div id="payment-method" />
@@ -43,6 +62,9 @@ function CheckoutPage() {
         className="btn primary w-100"
         onClick={async () => {
           const orderId = uuidv4();
+          const amountValue = 50000;
+          await postTestData(orderId, amountValue);
+
           await widgets?.requestPayment({
             orderId: orderId,
             orderName: '토스 티셔츠 외 2건',

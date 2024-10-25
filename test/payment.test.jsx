@@ -18,7 +18,8 @@ vi.mock('uuid', () => ({
 vi.mock('@supabase/supabase-js', () => {
   const mockSupabaseClient = {
     from: vi.fn().mockReturnThis(),
-    upsert: vi.fn(),
+    // Supabase의 upsert 메소드에 대한 모킹 반환값 설정
+    upsert: vi.fn().mockResolvedValue({ data: {}, error: null }),
   };
   return {
     createClient: () => mockSupabaseClient,
@@ -117,17 +118,16 @@ describe('CheckoutPage 데이터베이스 저장', () => {
     const mockOrderId = 'test-order-id';
     const mockAmountValue = 50000;
 
-    // Supabase의 upsert 메소드에 대한 모킹 반환값 설정
-    mockSupabaseClient.upsert.mockResolvedValue({ data: {}, error: null });
-
-    // 페이지 렌더링 및 결제 정보 업로드 함수 호출
-    render(<CheckoutPage />);
+    // 페이지 렌더링 및 결제 버튼 클릭 시 postTestData 호출
+    const { getByText } = render(<CheckoutPage />);
+    const payButton = getByText('결제하기');
+    fireEvent.click(payButton);
 
     // postTestData 호출을 테스트할 수 있도록 테스트용으로 만들어진 orderId, amount 값으로 호출
     await waitFor(() => {
       expect(mockSupabaseClient.from).toHaveBeenCalledWith('payment');
       expect(mockSupabaseClient.upsert).toHaveBeenCalledWith([
-        { orderId: mockOrderId, amount: mockAmountValue, order_id: expect.any(String) },
+        { orderId: expect.any(String), amount: mockAmountValue, order_id: expect.any(String) },
       ]);
     });
   });

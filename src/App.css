@@ -1,42 +1,16 @@
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-}
+  position: relative;
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
+  /* 화면 최대 너비를 500px로 지정 */
+  max-width: 500px;
+  /* 500px 이하일 경우 화면 전체 너비 사용 */
+  width: 100vw;
+  /* 모바일 기기일 경우 위아래 브라우저 UI 영역을 제외한 화면 높이 사용 */
+  height: 100svh;
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
+  /* 오버플로우 설정 */
+  overflow-y: auto;
+  overflow-x: hidden;
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
+  background-color: var(--background);
 }

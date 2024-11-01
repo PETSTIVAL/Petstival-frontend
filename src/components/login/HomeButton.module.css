@@ -1,0 +1,8 @@
+.homeButtonLayout {
+    display: inline-flex;
+    /* justify-content: flex-end; */
+    margin-left: 430px;
+    margin-top: 30px;
+    cursor: pointer;
+}
+

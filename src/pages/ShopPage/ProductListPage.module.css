@@ -1,0 +1,9 @@
+.itemWrapper {
+  display: flex;
+  flex-wrap: wrap;
+  /* justify-content: center; */
+}
+
+.itemWrapper > * {
+  width: calc(50%); /* 2열로 만들기 위해 50% 너비를 설정 */
+}

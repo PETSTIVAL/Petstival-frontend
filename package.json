@@ -9,19 +9,43 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "chromatic": "npx chromatic --project-token=chpt_547e281637c23d2"
   },
   "dependencies": {
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
+    "@mui/icons-material": "^6.1.5",
+    "@mui/material": "^6.1.5",
+    "@mui/x-date-pickers": "^7.22.0",
+    "@react-google-maps/api": "^2.20.3",
+    "@supabase/supabase-js": "^2.45.6",
+    "@tosspayments/tosspayments-sdk": "^2.3.2",
+    "axios": "^1.7.7",
+    "dayjs": "^1.11.13",
+    "jwt-decode": "^4.0.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "react-material-ui-carousel": "^3.4.2",
+    "react-modal": "^3.16.1",
+    "react-router-dom": "^6.27.0",
+    "react-slick": "^0.30.2",
+    "slick-carousel": "^1.8.1",
+    "styled-components": "^6.1.13",
+    "uuid": "^10.0.0",
+    "vite-plugin-svgr": "^4.2.0",
+    "zustand": "^5.0.0"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^1.9.0",
     "@eslint/js": "^9.11.1",
+    "@storybook/addon-designs": "^8.0.3",
     "@storybook/addon-essentials": "^8.3.5",
     "@storybook/addon-interactions": "^8.3.5",
     "@storybook/addon-links": "^8.3.5",
     "@storybook/addon-onboarding": "^8.3.5",
+    "@storybook/addons": "^7.6.17",
+    "@storybook/api": "^7.6.17",
     "@storybook/blocks": "^8.3.5",
     "@storybook/builder-vite": "^8.3.5",
     "@storybook/react": "^8.3.5",
@@ -30,6 +54,7 @@
     "@types/react": "^18.3.10",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.2",
+    "chromatic": "^11.12.6",
     "eslint": "^9.12.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
@@ -41,6 +66,8 @@
     "prettier": "^3.3.3",
     "prop-types": "^15.8.1",
     "storybook": "^8.3.5",
-    "vite": "^5.4.8"
+    "supabase": "^1.204.3",
+    "vite": "^5.4.8",
+    "vite-plugin-svgr": "^4.2.0"
   }
 }

@@ -18,7 +18,7 @@ export const signInWithProvider = async (provider) => {
         access_type: 'offline',
         prompt: 'consent',
       },
-      redirectTo: 'http://localhost:5173/oauth',
+      redirectTo: 'https://petstival.vercel.app/oauth',
     },
   });
 
@@ -28,10 +28,9 @@ export const signInWithProvider = async (provider) => {
   }
 
   const userData = data;
-//   console.log("사용자 데이터:", JSON.stringify(userData, null, 2)); // 사용자 데이터 출력
+  //   console.log("사용자 데이터:", JSON.stringify(userData, null, 2)); // 사용자 데이터 출력
   if (userData) {
-    console.log("띠용?",data.auth_event);
-    
+    console.log('띠용?', data.auth_event);
   }
   console.log('로그인 성공:', userData);
 };
@@ -58,22 +57,22 @@ export const logout = async () => {
  * @returns {Promise<void>}
  */
 export const deleteAccount = async (user) => {
-  const { clearUser  } = useAuthStore.getState();
- 
-//   const { user, error } = await supabase.auth.getUser();
-//   console.log("탈퇴 버튼 유저 정보 : ",useUserAuthInfo);
-//   if (error) {
-//     console.error('유저 정보 가져오기 오류:', error.message);
-//     return;
-//   }
+  const { clearUser } = useAuthStore.getState();
+
+  //   const { user, error } = await supabase.auth.getUser();
+  //   console.log("탈퇴 버튼 유저 정보 : ",useUserAuthInfo);
+  //   if (error) {
+  //     console.error('유저 정보 가져오기 오류:', error.message);
+  //     return;
+  //   }
 
   if (!user) {
     console.error('유저가 로그인되지 않았습니다.');
     return;
   }
-  console.log("유저 정보! : ",user);
-  console.log("유저 아이디! : ",user.id);
-  const { data , error } = await supabaseAdmin.auth.admin.deleteUser(user.id);
+  console.log('유저 정보! : ', user);
+  console.log('유저 아이디! : ', user.id);
+  const { data, error } = await supabaseAdmin.auth.admin.deleteUser(user.id);
   if (error) {
     console.error('회원 탈퇴 오류:', error.message);
     return;

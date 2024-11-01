@@ -14,7 +14,7 @@ function SuccessPage() {
     // TODO: API를 호출해서 서버에게 paymentKey, orderId, amount를 넘겨주세요.
     // 서버에선 해당 데이터를 가지고 승인 API를 호출하면 결제가 완료됩니다.
     // https://docs.tosspayments.com/reference#%EA%B2%B0%EC%A0%9C-%EC%8A%B9%EC%9D%B8
-    const response = await fetch('api/payment', {
+    const response = await fetch('https://hfnchwvpqruwmlehusbs.supabase.co/functions/v1/payment', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -6,6 +6,7 @@ const widgetSecretKey = Deno.env.get('WIDGET_SECRET_KEY');
 Deno.serve(async (req) => {
   // Handle CORS preflight request
   if (req.method === 'OPTIONS') {
+    console.log('CORS preflight request received');
     return new Response(null, {
       status: 204,
       headers: {

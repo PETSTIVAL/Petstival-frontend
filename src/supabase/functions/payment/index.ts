@@ -1,7 +1,8 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts"
 import { corsHeaders } from '../_shared/cors.ts'
 
-const widgetSecretKey = Deno.env.get('WIDGET_SECRET_KEY')
+// const widgetSecretKey = Deno.env.get('WIDGET_SECRET_KEY')
+const widgetSecretKey = "test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6"
 
 Deno.serve(async (req) => {
   if (req.method === "POST" && req.url === "http://edge-runtime.supabase.com/payment") {

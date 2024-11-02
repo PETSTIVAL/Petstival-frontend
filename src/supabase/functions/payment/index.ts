@@ -5,6 +5,7 @@ const widgetSecretKey = Deno.env.get('WIDGET_SECRET_KEY');
 
 Deno.serve(async (req) => {
   console.log(req.method);
+
   // Handle CORS preflight request
   if (req.method === 'OPTIONS') {
     console.log('CORS preflight request received');
@@ -17,7 +18,7 @@ Deno.serve(async (req) => {
       },
     });
   }
-  
+
   // Handle the actual POST request
   if (req.method === "POST" && req.url.includes("/payment")) {
     const { paymentKey, orderId, amount } = await req.json();
@@ -36,12 +37,14 @@ Deno.serve(async (req) => {
       const data = await response.json();
       console.log(data);
 
+      // CORS headers should be included in every response
       return new Response(JSON.stringify(data), {
         status: 200,
         headers: {
           'Access-Control-Allow-Origin': 'https://petstival.vercel.app',
           'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
           'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          'Content-Type': 'application/json',
         },
       });
     } catch (error) {

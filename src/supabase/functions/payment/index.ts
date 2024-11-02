@@ -6,16 +6,11 @@ const widgetSecretKey = Deno.env.get('WIDGET_SECRET_KEY');
 Deno.serve(async (req) => {
   // Handle CORS preflight request
   if (req.method === "OPTIONS") {
-    return new Response(null, {
-      headers: {
-        ...corsHeaders,
-        "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
-      },
-    });
+    return new Response(null, { status: 204, headers: corsHeaders });
   }
 
   // Handle the actual POST request
-  if (req.method === "POST" && req.url === "https://hfnchwvpqruwmlehusbs.supabase.co/functions/v1/payment") {
+  if (req.method === "POST" && req.url.includes("/payment")) {
     const { paymentKey, orderId, amount } = await req.json();
     const encryptedSecretKey = "Basic " + btoa(widgetSecretKey + ":");
 

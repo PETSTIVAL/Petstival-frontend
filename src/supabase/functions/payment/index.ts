@@ -9,7 +9,7 @@ Deno.serve(async (req) => {
     return new Response(null, {
       status: 204,
       headers: {
-        'Access-Control-Allow-Origin': 'https://petstival.vercel.app/',
+        'Access-Control-Allow-Origin': 'https://petstival.vercel.app',
         'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type, Authorization',
       },

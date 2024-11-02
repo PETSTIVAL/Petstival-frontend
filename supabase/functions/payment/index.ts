@@ -4,7 +4,6 @@ import { corsHeaders } from '../_shared/cors.ts';
 const widgetSecretKey = Deno.env.get('WIDGET_SECRET_KEY');
 
 Deno.serve(async (req) => {
-  console.log(req.method);
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }

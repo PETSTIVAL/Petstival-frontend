@@ -4,7 +4,7 @@ import { corsHeaders } from '../_shared/cors.ts'
 const widgetSecretKey = Deno.env.get('WIDGET_SECRET_KEY')
 
 Deno.serve(async (req) => {
-  if (req.method === "POST" && req.url === "https://hfnchwvpqruwmlehusbs.supabase.co/functions/v1/payment") {
+  if (req.method === "POST" && req.url === "http://edge-runtime.supabase.com/payment") {
     const { paymentKey, orderId, amount } = await req.json();
 
     const encryptedSecretKey =

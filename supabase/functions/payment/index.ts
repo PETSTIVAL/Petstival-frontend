@@ -33,7 +33,13 @@ Deno.serve(async (req) => {
         const errorInfo = { code: data.code || "UNKNOWN_ERROR", message: data.message || "An error occurred" }; // 에러 정보 객체 생성
         throw { ...errorInfo }; // 사용자 정의 에러 객체 던지기
       }
-        return new Response(JSON.stringify(data));
+      return new Response(JSON.stringify(data), {
+        status: 200,
+        headers: {
+          ...corsHeaders,
+          "Content-Type": "application/json",
+        },
+      });
     } catch (error) {
       const errorCode = error.code || "UNKNOWN_ERROR"; // 사용자 정의 에러 객체에서 code 가져오기
       const errorMessage = error.message || "An error occurred"; // 사용자 정의 에러 객체에서 message 가져오기

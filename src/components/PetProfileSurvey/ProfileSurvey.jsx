@@ -4,14 +4,98 @@ import RadioGroup from './RadioGroup';
 import RadioButton from './RadioButton';
 import UploadProfileButton from './UploadProfileButton';
 import InputNumber from '../Common/Input/InputNumber';
-import { useEffect } from 'react';
+import { useEffect, useState, useRef } from 'react';
+import supabase from '../../services/supabaseClient';
 
 function ProfileSurvey({ step, petProfileData, setPetProfileData, validateStep, setIsNextButtonEnabled }) {
-  // step이 변경되거나 petProfileData가 업데이트될 때마다 유효성 검사
+  const [suggestions, setSuggestions] = useState([]); // 자동완성 견종 추천 목록
+  const [inputValue, setInputValue] = useState(''); // 사용자가 입력하는 텍스트
+  const [isAutoSearch, setIsAutoSearch] = useState(false);
+  const [focusIndex, setFocusIndex] = useState(-1);
+  const listRef = useRef(null);
+  const focusRef = useRef(null);
+
   useEffect(() => {
     const isStepValid = validateStep();
-    setIsNextButtonEnabled(isStepValid); // 부모 컴포넌트에 유효성 검사 결과 전달
+    setIsNextButtonEnabled(isStepValid);
   }, [step, petProfileData, setIsNextButtonEnabled]);
+
+  const fetchBreeds = async (query) => {
+    // console.log('Fetching breeds for query:', query);
+    const { data, error } = await supabase.from('breeds').select('name').ilike('name', `%${query}%`);
+
+    if (error) {
+      console.error('Error fetching breeds:', error);
+    } else {
+      // console.log('Fetched breeds:', data);
+      setSuggestions(data.map((breed) => breed.name));
+    }
+  };
+
+  // 디바운싱을 사용해 Supabase에서 견종 목록을 가져오는 useEffect
+  useEffect(() => {
+    if (inputValue.trim() === '') {
+      setSuggestions([]);
+      return;
+    }
+
+    const delayDebounceFn = setTimeout(() => {
+      fetchBreeds(inputValue);
+    }, 300);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [inputValue]);
+
+  // 키보드 이벤트 처리
+  const handleKeyUp = (e) => {
+    const KeyEvent = {
+      Enter: () => {
+        if (focusIndex >= 0 && suggestions[focusIndex]) {
+          setPetProfileData((prev) => ({
+            ...prev,
+            breed: suggestions[focusIndex],
+          }));
+          setIsAutoSearch(false);
+          setFocusIndex(-1);
+          setSuggestions([]);
+        }
+      },
+      ArrowDown: () => {
+        if (suggestions.length === 0) return;
+        if (focusIndex === suggestions.length - 1) {
+          setFocusIndex(0);
+        } else {
+          setFocusIndex((prevIndex) => prevIndex + 1);
+        }
+        setIsAutoSearch(true);
+      },
+      ArrowUp: () => {
+        if (focusIndex === -1) return;
+        if (focusIndex === 0) {
+          setFocusIndex(suggestions.length - 1);
+        } else {
+          setFocusIndex((prevIndex) => prevIndex - 1);
+        }
+      },
+      Escape: () => {
+        setSuggestions([]);
+        setIsAutoSearch(false);
+        setFocusIndex(-1);
+      },
+    };
+
+    if (KeyEvent[e.key]) KeyEvent[e.key]();
+  };
+
+  // 입력값 변경 처리
+  const handleInputChange = (e) => {
+    const newValue = e.target.value;
+    setInputValue(newValue);
+    setPetProfileData((prev) => ({
+      ...prev,
+      breed: newValue,
+    }));
+  };
 
   return (
     <>
@@ -26,7 +110,7 @@ function ProfileSurvey({ step, petProfileData, setPetProfileData, validateStep, 
               return { ...prev, pet_name: event.target.value };
             })
           }
-        ></Input>
+        />
       )}
       {/* 2. 반려견 생년월일 숙지 여부 */}
       {step === 2 && (
@@ -40,12 +124,11 @@ function ProfileSurvey({ step, petProfileData, setPetProfileData, validateStep, 
             })
           }
           size="Large"
-        ></RadioGroup>
+        />
       )}
       {/* 3. 반려견 나이 */}
       {step === 3 && (
         <>
-          {/* 3-1. 생년월일을 정확히 알고 있는 경우 */}
           {petProfileData.know_birth ? (
             <Input
               type="date"
@@ -56,10 +139,9 @@ function ProfileSurvey({ step, petProfileData, setPetProfileData, validateStep, 
                   return { ...prev, birth_date: event.target.value };
                 })
               }
-            ></Input>
+            />
           ) : (
             <div className={`${styles.inputWrapper}`}>
-              {/* 3-2. 대략적인 개월수만 알고 있는 경우 */}
               <InputNumber
                 type="number"
                 value={petProfileData.birth_year}
@@ -88,19 +170,41 @@ function ProfileSurvey({ step, petProfileData, setPetProfileData, validateStep, 
           )}
         </>
       )}
-      {/* 4. 반려견 견종 */}
+      {/* 견종 입력 및 자동완성 */}
       {step === 4 && (
-        <Input
-          type="text"
-          value={petProfileData.breed}
-          placeholder="견종을 입력해주세요"
-          setData={(event) =>
-            setPetProfileData((prev) => {
-              return { ...prev, breed: event.target.value };
-            })
-          }
-        />
+        <div className={`${styles.autoCompleteWrapper}`}>
+          <Input
+            type="text"
+            value={isAutoSearch && focusIndex >= 0 ? suggestions[focusIndex] : petProfileData.breed}
+            placeholder="견종을 입력해주세요"
+            setData={handleInputChange}
+            onKeyUp={handleKeyUp}
+          />
+          {suggestions.length > 0 && (
+            <ul className={`${styles.suggestionsList} drop-shadow-default`} ref={listRef}>
+              {suggestions.map((breed, index) => (
+                <li
+                  key={index}
+                  ref={index === focusIndex ? focusRef : null}
+                  onClick={() => {
+                    setPetProfileData((prev) => ({
+                      ...prev,
+                      breed,
+                    }));
+                    setInputValue(breed);
+                    setSuggestions([]);
+                    setFocusIndex(-1);
+                  }}
+                  className={`${styles.suggestionItem} ${index === focusIndex ? styles.active : ''}`}
+                >
+                  {breed}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       )}
+      {/* 다른 항목들 */}
       {/* 5. 반려견 성별 */}
       {step === 5 && (
         <div className={`${styles.genderRadioWrapper}`}>

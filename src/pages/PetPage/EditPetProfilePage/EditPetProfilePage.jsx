@@ -14,6 +14,7 @@ import YesNoModal from '../../../components/Common/Modal/YesNoModal';
 import deletePetProfile from '../../../services/deletePetProfile';
 import updatePetProfile from '../../../services/updatePetProfile';
 import usePetProfileForm from '../../../hooks/usePetProfileForm';
+import supabase from '../../../services/supabaseClient';
 
 function EditPetProfilePage() {
   const location = useLocation();
@@ -21,43 +22,22 @@ function EditPetProfilePage() {
   const { petData } = location.state || {};
 
   const {
-    petProfileData, // 반려견 프로필 정보
-    setPetProfileData, // 반려견 프로필 정보 수정 함수
-    validatePetProfile, // 반려견 프로필
+    petProfileData,
+    setPetProfileData,
+    validatePetProfile,
     errorMsg,
   } = usePetProfileForm();
 
-  const [modalType, setModalType] = useState('');
+  const [suggestions, setSuggestions] = useState([]); // 자동완성 견종 목록
+  const [inputValue, setInputValue] = useState(petData.breed || ""); // 사용자가 입력하는 텍스트
+  const [focusIndex, setFocusIndex] = useState(-1);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [isFailedModalOpen, setIsFailedModalOpen] = useState(false);
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const [modalType, setModalType] = useState('');
 
-  // 반려견 프로필 데이터 삭제
-  async function handleDeletePetProfile() {
-    try {
-      await deletePetProfile(petId); // petId에 해당하는 반려견 프로필 데이터 삭제
-      setModalType('삭제');
-      setIsSuccessModalOpen(true); // 삭제에 성공한 경우 성공 알림 모달 띄움
-    } catch (error) {
-      setModalType('삭제');
-      setIsFailedModalOpen(true); // 삭제에 실패한 경우 실패 알림 모달 띄움
-    }
-  }
-
-  // 반려견 프로필 데이터 업데이트
-  async function handleUpdatePetProfile() {
-    try {
-      await updatePetProfile(petId, petProfileData);
-      setModalType('수정');
-      setIsSuccessModalOpen(true); // 업데이트에 성공한 경우 업데이트 성공 알림 모달 띄움
-    } catch (error) {
-      setModalType('수정');
-      setIsFailedModalOpen(true); // 업데이트에 실패한 경우 업데이트 실패 모달 띄움
-    }
-  }
-
-  // 초기 화면 렌더링 시 petData를 usePetProfileSurvey 훅에 저장
+  // 초기 데이터 설정
   useEffect(() => {
     setPetProfileData({
       pet_name: petData.pet_name,
@@ -74,54 +54,136 @@ function EditPetProfilePage() {
     });
   }, []);
 
-  // petProfileData가 변경될 때마다 유효성 검사
+  // 유효성 검사
   useEffect(() => {
     const isValid = validatePetProfile();
-    if (!isValid) {
-      setIsButtonDisabled(true);
-    } else {
-      setIsButtonDisabled(false);
-    }
+    setIsButtonDisabled(!isValid);
   }, [petProfileData]);
+
+  // 견종 자동완성 데이터베이스 검색
+  const fetchBreeds = async (query) => {
+    if (!query) return;
+    const { data, error } = await supabase
+      .from('breeds')
+      .select('name')
+      .ilike('name', `%${query}%`);
+
+    if (error) {
+      console.error("Error fetching breeds:", error);
+    } else {
+      setSuggestions(data.map(breed => breed.name));
+
+      // 기존 선택된 견종에 대해 focusIndex 설정
+      const matchedIndex = data.findIndex((breed) => breed.name === inputValue);
+      if (matchedIndex !== -1) {
+        setFocusIndex(matchedIndex);
+      }
+    }
+  };
+
+  // 입력할 때 디바운싱을 통해 자동완성 목록 갱신
+  useEffect(() => {
+    if (inputValue.trim() === "") {
+      setSuggestions([]);
+      return;
+    }
+
+    const delayDebounceFn = setTimeout(() => {
+      fetchBreeds(inputValue);
+    }, 300);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [inputValue]);
+
+  const handleInputChange = (e) => {
+    const newValue = e.target.value;
+    setInputValue(newValue);
+    setPetProfileData((prev) => ({
+      ...prev,
+      breed: newValue,
+    }));
+  };
+
+  const handleKeyUp = (e) => {
+    if (e.key === "ArrowDown") {
+      setFocusIndex((prev) => (prev + 1) % suggestions.length);
+    } else if (e.key === "ArrowUp") {
+      setFocusIndex((prev) => (prev === 0 ? suggestions.length - 1 : prev - 1));
+    } else if (e.key === "Enter" && focusIndex >= 0) {
+      setPetProfileData((prev) => ({
+        ...prev,
+        breed: suggestions[focusIndex],
+      }));
+      setInputValue(suggestions[focusIndex]);
+      setSuggestions([]);
+      setFocusIndex(-1);
+    } else if (e.key === "Escape") {
+      setSuggestions([]);
+      setFocusIndex(-1);
+    }
+  };
+
+  // 프로필 삭제 처리
+  async function handleDeletePetProfile() {
+    try {
+      await deletePetProfile(petId);
+      setModalType('삭제');
+      setIsSuccessModalOpen(true);
+    } catch (error) {
+      setModalType('삭제');
+      setIsFailedModalOpen(true);
+    }
+  }
+
+  // 프로필 수정 처리
+  async function handleUpdatePetProfile() {
+    try {
+      await updatePetProfile(petId, petProfileData);
+      setModalType('수정');
+      setIsSuccessModalOpen(true);
+    } catch (error) {
+      setModalType('수정');
+      setIsFailedModalOpen(true);
+    }
+  }
 
   return (
     <>
       {petProfileData ? (
-        <div className={`${styles.container}`}>
-          <DetailBar title={'프로필 정보 수정하기'} />
-          <div className={`${styles.wrapper}`}>
-            <div className={`${styles.form}`}>
-              {/* 1. 프로필 사진 */}
-              <div className={`${styles.fieldContainer}`}>
-                <div className={`${styles.label}`}>프로필 사진</div>
+        <div className={styles.container}>
+          <DetailBar title="프로필 정보 수정하기" />
+          <div className={styles.wrapper}>
+            <div className={styles.form}>
+              {/* 프로필 사진 */}
+              <div className={styles.fieldContainer}>
+                <div className={styles.label}>프로필 사진</div>
                 <UploadProfileButton
                   petName={petProfileData.pet_name}
                   profileUrl={petProfileData.profile_url}
                   setData={(data) =>
-                    setPetProfileData((prev) => {
-                      return { ...prev, profile_url: data };
-                    })
+                    setPetProfileData((prev) => ({ ...prev, profile_url: data }))
                   }
                 />
               </div>
-              {/* 2. 반려견 이름 */}
-              <div className={`${styles.fieldContainer}`}>
-                <div className={`${styles.label}`}>이름</div>
+              {/* 이름 */}
+              <div className={styles.fieldContainer}>
+                <div className={styles.label}>이름</div>
                 <Input
-                  type={'text'}
+                  type="text"
                   value={petProfileData.pet_name}
-                  placeholder={'이름을 입력하세요'}
+                  placeholder="이름을 입력하세요"
                   setData={(event) =>
-                    setPetProfileData((prev) => {
-                      return { ...prev, pet_name: event.target.value };
-                    })
+                    setPetProfileData((prev) => ({
+                      ...prev,
+                      pet_name: event.target.value,
+                    }))
                   }
                 />
-                <div className={`${styles.errorMsg}`}>{errorMsg.name}</div>
+                <div className={styles.errorMsg}>{errorMsg.name}</div>
               </div>
-              {/* 3. 나이 */}
-              <div className={`${styles.fieldContainer}`}>
-                <div className={`${styles.label}`}>나이</div>
+              {/* 나이 */}
+              <div className={styles.fieldContainer}>
+                <div className={styles.label}>나이</div>
                 <RadioGroup
                   title={['생년월일', '개월수']}
                   value={[true, false]}
@@ -135,16 +197,16 @@ function EditPetProfilePage() {
                 {petProfileData.know_birth ? (
                   <>
                     <Input
-                      type={'date'}
+                      type="date"
                       value={petProfileData.birth_date}
-                      placeholder={'생년월일을 입력하세요'}
+                      placeholder="생년월일을 입력하세요"
                       setData={(event) =>
                         setPetProfileData((prev) => {
                           return { ...prev, birth_date: event.target.value };
                         })
                       }
                     />
-                    <div className={`${styles.errorMsg}`}>{errorMsg.date}</div>
+                    <div className={styles.errorMsg}>{errorMsg.date}</div>
                   </>
                 ) : (
                   <>
@@ -172,28 +234,47 @@ function EditPetProfilePage() {
                         })
                       }
                     />
-                    <div className={`${styles.errorMsg}`}>{errorMsg.month}</div>
+                    <div className={styles.errorMsg}>{errorMsg.month}</div>
                   </>
                 )}
               </div>
-              {/* 4. 견종 */}
-              <div className={`${styles.fieldContainer}`}>
-                <div className={`${styles.label}`}>견종</div>
+              {/* 견종 */}
+              <div className={styles.fieldContainer}>
+                <div className={styles.label}>견종</div>
                 <Input
-                  value={petProfileData.breed}
-                  type={'text'}
-                  placeholder={'견종을 입력하세요'}
-                  setData={(event) =>
-                    setPetProfileData((prev) => {
-                      return { ...prev, breed: event.target.value };
-                    })
-                  }
-                ></Input>
-                <div className={`${styles.errorMsg}`}>{errorMsg.breed}</div>
+                  type="text"
+                  value={inputValue}
+                  placeholder="견종을 입력하세요"
+                  setData={handleInputChange}
+                  onKeyUp={handleKeyUp}
+                />
+                {suggestions.length > 0 && (
+                  <ul className={styles.suggestionsList}>
+                    {suggestions.map((breed, index) => (
+                      <li
+                        key={index}
+                        onClick={() => {
+                          setPetProfileData((prev) => ({
+                            ...prev,
+                            breed,
+                          }));
+                          setInputValue(breed);
+                          setSuggestions([]);
+                        }}
+                        className={`${styles.suggestionItem} ${
+                          index === focusIndex ? styles.active : ''
+                        }`}
+                      >
+                        {breed}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                <div className={styles.errorMsg}>{errorMsg.breed}</div>
               </div>
-              {/* 5. 성별 */}
-              <div className={`${styles.fieldContainer}`}>
-                <div className={`${styles.label}`}>성별</div>
+              {/* 성별 */}
+              <div className={styles.fieldContainer}>
+                <div className={styles.label}>성별</div>
                 <RadioGroup
                   title={['남아', '여아']}
                   value={['male', 'female']}

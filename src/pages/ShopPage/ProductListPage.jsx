@@ -18,9 +18,12 @@ const ProductListPage = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('전체'); // 기본 탭은 '전체'로 설정
   const { products, fetchProducts } = useProductStore();
-  
+  const [loading, setLoading] = useState(true); // 로딩 상태 추가
+
   const fetchData = async () => {
-    await fetchProducts(); // 비동기 함수 호출
+    setLoading(true);
+    await fetchProducts();
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -54,25 +57,31 @@ const ProductListPage = () => {
   });
 
   if (!products) {
-    return <p>Loading product details...</p>;
+    return <p>no data</p>;
   }
 
   return (
     <>
       <Header />
       <Wrapper>
-        <ShopTabBar activeTab={activeTab} onTabChange={handleTabChange} /> {/* activeTab을 ShopTabBar로 전달 */}
-        <div className={styles.itemWrapper}>
-          {filteredProducts.map((product) => (
-            <ProductItem
-              key={product.product_id}
-              id={product.product_id}
-              title={product.product_name}
-              price={product.price}
-              imageSrc={product.image_url_1}
-            />
-          ))}
-        </div>
+        {loading ? (
+          <LinearProgress />
+        ) : (
+          <>
+            <ShopTabBar activeTab={activeTab} onTabChange={handleTabChange} /> {/* activeTab을 ShopTabBar로 전달 */}
+            <div className={styles.itemWrapper}>
+              {filteredProducts.map((product) => (
+                <ProductItem
+                  key={product.product_id}
+                  id={product.product_id}
+                  title={product.product_name}
+                  price={product.price}
+                  imageSrc={product.image_url_1}
+                />
+              ))}
+            </div>
+          </>
+        )}
       </Wrapper>
       <Navbar selectedMenu="Shop" />
     </>

@@ -11,6 +11,7 @@ import Chip from '@mui/material/Chip';
 import { useNavigate } from 'react-router-dom';
 import supabase from '../../services/supabaseClient';
 import noImage from '../../assets/images/no-image.jpg';
+import { LinearProgress } from '@mui/material';
 
 const Wrapper = styled.section`
   margin-left: 24px;
@@ -64,7 +65,7 @@ export default function PetstivalListPage() {
       <Wrapper>
         {error && <p style={{ color: 'red' }}>오류: {error}</p>}
         {loading ? (
-          '로딩 중...'
+          <LinearProgress />
         ) : (
           <ImageList cols={1}>
             {data.map((item) => {

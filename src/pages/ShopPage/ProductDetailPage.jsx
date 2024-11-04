@@ -8,20 +8,30 @@ import Header from '../../components/Header/Header';
 import Navbar from '../../components/Navbar/Navbar';
 import styles from './ProductDetailPage.module.css';
 import ButtonMedium from '../../components/Common/Button/ButtonMedium';
+import { useCartStore } from '../../stores/useCartStore';
+import YesNoModal from '../../components/Common/Modal/YesNoModal';
+import DefaultModal from '../../components/Common/Modal/DefaultModal';
+import { useOrderItemStore } from '../../stores/useOrderItemStore';
 
 const ProductDetailPage = () => {
-  // url에서 id 가져옴
   const { id } = useParams();
-  const { fetchProducts, getProductById } = useProductStore();
-  const [product, setProduct] = useState(null);
-  const {user} = useAuthStore();
   const navigate = useNavigate();
+  const [product, setProduct] = useState(null);
+  const [cartQuantity, setCartQuantity] = useState(1); // ItemSelectedContainer에서 변경되는 수량 정보를 저장하는 상태 변수
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [isFailedModalOpen, setIsFailedModalOpen] = useState(false);
 
-  // Zustand에서 제품 데이터 가져오기
+  const { user } = useAuthStore();
+  const { fetchProducts, getProductById } = useProductStore();
+  const cartItems = useCartStore((state) => state.cartItems); // 장바구니에 store에 담겨 있는 아이템 정보
+  const addCartItem = useCartStore((state) => state.addCartItem); // 장바구니 store에 선택한 상품을 추가하는 함수
+  const updateCartItem = useCartStore((state) => state.updateCartItem); // 장바구니 store에 선택한 상품을 추가하는 함수
+  const addOrderItem = useOrderItemStore((state) => state.addOrderItem); // 주문 상품 store에 선택한 상품을 추가하는 함수
+
   const loadProduct = async () => {
-    await fetchProducts(); // 비동기 함수로 제품 데이터 불러오기
+    await fetchProducts();
     const foundProduct = getProductById(id);
-    setProduct(foundProduct); // 제품을 상태에 저장
+    setProduct(foundProduct);
   };
 
   useEffect(() => {
@@ -32,56 +42,87 @@ const ProductDetailPage = () => {
     return <p>Loading product details...</p>;
   }
 
-  const handleAddToCart = () => {
-    // 장바구니 페이지로 이동
-    if(!user){
+  const handleAddToCart = async () => {
+    if (!user) {
       navigate('/login');
+    } else {
+      // cartStore에 이미 해당 상품이 담겨있는지 검사
+      const prevItem = cartItems.find((item) => item.productId === product.product_id);
+
+      // 이미 장바구니에 아이템이 있는 경우 수량만 업데이트
+      if (prevItem) {
+        const isUpdated = await updateCartItem({
+          productId: prevItem.productId,
+          quantity: prevItem.quantity + cartQuantity,
+        });
+        // 장바구니 정보 업데이트에 실패한 경우 실패 모달 open
+        if (!isUpdated) {
+          setIsFailedModalOpen(true);
+          return;
+        }
+      } else {
+        const isUpdated = await addCartItem({
+          productId: product.product_id,
+          unitPrice: product.price,
+          quantity: cartQuantity,
+        });
+        // 장바구니 정보 업데이트에 실패한 경우 실패 모달 open
+        if (!isUpdated) {
+          setIsFailedModalOpen(true);
+          return;
+        }
+      }
+      setIsConfirmModalOpen(true);
     }
-    else {
-      navigate('/cart');
-    }
-    
   };
 
   const handleBuyNow = () => {
-    if(!user){
+    if (!user) {
       navigate('/login');
+    } else {
+      addOrderItem([
+        {
+          productId: product.product_id,
+          unitPrice: product.price,
+          quantity: cartQuantity,
+          totalPrice: product.price * cartQuantity,
+        },
+      ]);
+      navigate(`/order`); // router를 '/order' 로 설정
     }
-    else {
-      navigate(`/products/${id}/order`)
-    }
-    
   };
 
   return (
     <>
-    <Header />
-    <div className={styles.detailContainer}>
-      {/* 제품 이미지 - 이미지 스토리지에 넣은 URL 사용 */}
-      <img
-        src={product.image_url_1}
-        alt={product.product_name}
-      //  className={styles.productDetailImage}
+      <Header />
+      <div className={styles.detailContainer}>
+        <img src={product.image_url_1} alt={product.product_name} />
+        <div className={styles.infoTextWrapper}>
+          <h2 className={styles.titleText}>{product.product_name}</h2>
+          <p className={styles.contentText}>{product.contents}</p>
+          <p className={styles.priceTextOrange}>{product.price.toLocaleString()}원</p>
+        </div>
+        <ItemSelectContainer price={product.price} setCartQuantity={setCartQuantity} />
+        <div className={styles.buttonWrapper}>
+          <ButtonMedium children={'장바구니 담기'} sub={'secondary'} onClick={handleAddToCart} />
+          <ButtonMedium children={'구매하기'} sub={'primary'} onClick={handleBuyNow} />
+        </div>
+      </div>
+      <Navbar selectedMenu="Shop" />
+      <YesNoModal
+        title={`장바구니 확인`}
+        content={`장바구니에 상품을 담았어요.\n장바구니로 이동할까요?`}
+        isOpen={isConfirmModalOpen}
+        setIsOpen={() => setIsConfirmModalOpen(!isConfirmModalOpen)}
+        onYesClick={() => navigate('/cart')}
       />
-      {/* 제품 제목, 설명, 가격 */}
-      <div className={styles.infoTextWrapper}>
-        <h2 className={styles.titleText}>{product.product_name}</h2>
-        <p className={styles.contentText}>
-          {product.contents}
-        </p>
-        <p className={styles.priceTextOrange}>{product.price.toLocaleString()}원</p>
-      </div>
-      {/* 수량 선택 및 가격 표시 컴포넌트 삽입 */}
-      <ItemSelectContainer price={product.price} />
-      {/* 버튼 영역 */}
-      <div className={styles.buttonWrapper}>
-      <ButtonMedium children={'장바구니 담기'} sub={'secondary'} onClick={handleAddToCart} />
-      <ButtonMedium children={'구매하기'} sub={'primary'} onClick={handleBuyNow} />
-        {/* <button onClick={handleAddToCart}>장바구니</button>
-        <button onClick={handleBuyNow}>구매하기</button> */}
-      </div>
-    </div>
-    <Navbar selectedMenu="Shop" />
+      <DefaultModal
+        title={'장바구니 담기 실패'}
+        content={'장바구니에 담기지 않았어요.\n다시 시도해주세요.'}
+        isOpen={isFailedModalOpen}
+        setIsOpen={setIsFailedModalOpen}
+        onYesClick={null}
+      />
     </>
   );
 };

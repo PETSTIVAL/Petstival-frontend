@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import supabase from '../../services/supabaseClient';
+import { useOrderItemStore } from '../../stores/useOrderItemStore';
+import { useCartStore } from '../../stores/useCartStore';
 
 function SuccessPage() {
   const [isConfirmed, setIsConfirmed] = useState(false);
@@ -9,6 +11,8 @@ function SuccessPage() {
   const orderId = searchParams.get('orderId');
   const amount = searchParams.get('amount');
   const order_id = searchParams.get('order_id');
+  const { clearOrderItem } = useOrderItemStore.getState();
+  const { cartItems, clearCart, removeCartItems } = useCartStore.getState();
 
   async function confirmPayment() {
     // TODO: API를 호출해서 서버에게 paymentKey, orderId, amount를 넘겨주세요.
@@ -36,6 +40,14 @@ function SuccessPage() {
         setIsConfirmed(true);
         // payment table에 payment_state 정보를 success로 업데이트
         const { data, error } = await supabase.from('payment').update({ payment_state: 'success' }).eq('orderId', orderId);
+
+        const cartIdList = cartItems.map((item) => {
+          return item.productId;
+        });
+
+        removeCartItems(cartIdList); // 결제 성공 시 DB 장바구니 테이블에서 정보 삭제
+        clearCart(); // 결제 성공 시 장바구니 상태를 초기화
+        clearOrderItem(); // 결제 성공 시 주문 상태를 초기화
 
         if (error) {
           console.error('Error posting data:', error);
@@ -72,7 +84,7 @@ function SuccessPage() {
           </div>
 
           <div className="w-100 button-group">
-            <div className="flex" style={{ gap: '16px' }}>
+            <div className="flex" style={{ gap: '16px' }} onClick={() => clearCart()}>
               <Link to={`/`} className="btn w-100">
                 홈으로 가기
               </Link>

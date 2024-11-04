@@ -3,9 +3,10 @@ import { loadTossPayments, ANONYMOUS } from '@tosspayments/tosspayments-sdk';
 import { v4 as uuidv4 } from 'uuid';
 import './style.css';
 import { createClient } from '@supabase/supabase-js';
-import { useSearchParams, Link } from 'react-router-dom';
+import { useSearchParams, Link, useLocation } from 'react-router-dom';
 import useTotalStore from '../../stores/useTotalStore';
 import supabase from '../../services/supabaseClient';
+import { useOrderItemStore } from '../../stores/useOrderItemStore';
 
 const generateRandomString = () => window.btoa(Math.random()).slice(0, 20);
 const clientKey = import.meta.env.VITE_CLIENT_SECRET_KEY;
@@ -17,21 +18,24 @@ function CheckoutPage() {
   const [widgets, setWidgets] = useState(null);
   const [searchParams] = useSearchParams();
   const order_id = searchParams.get('order_id');
+  const location = useLocation();
+  const { orderName, customerName, customerEmail, customerNumber } = location.state || {};
 
-  const { totalPrice } = useTotalStore(); // Zustand 스토어에서 total 가져오기
+  // const { totalPrice } = useTotalStore(); // Zustand 스토어에서 total 가져오기
+  const { orderTotal } = useOrderItemStore(); // orderTotalStore에서 total 가져오기
 
   // ------ 주문의 결제 금액 설정 ------
   const [amount, setAmount] = useState({
     currency: 'KRW',
-    value: totalPrice || 50000, // total 값이 없으면 기본값 설정
+    value: orderTotal || 50000, // total 값이 없으면 기본값 설정
   });
 
   useEffect(() => {
     setAmount((prevAmount) => ({
       ...prevAmount,
-      value: totalPrice, // total 값을 value에 적용
+      value: orderTotal, // total 값을 value에 적용
     }));
-  }, [totalPrice]); // total이 변경될 때마다 실행
+  }, [orderTotal]); // total이 변경될 때마다 실행
 
   // supabase POST
   const postTestData = async (orderId, amountValue) => {
@@ -103,10 +107,10 @@ function CheckoutPage() {
 
                 await widgets?.requestPayment({
                   orderId: orderId,
-                  orderName: '토스 티셔츠 외 2건',
-                  customerName: '김토스',
-                  customerEmail: 'customer123@gmail.com',
-                  customerMobilePhone: '01012341234',
+                  orderName: orderName, // 주문 정보
+                  customerName: customerName, // 주문자 배송지 이름
+                  customerEmail: customerEmail, // 사용자 이메일
+                  customerMobilePhone: customerNumber, // 주문자 배송지 전화번호
                   successUrl: window.location.origin + '/success' + window.location.search,
                   failUrl: window.location.origin + '/fail' + window.location.search,
                 });

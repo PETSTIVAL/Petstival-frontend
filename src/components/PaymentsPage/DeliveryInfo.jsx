@@ -18,14 +18,18 @@ export default function DeliveryInfo() {
   const isFormComplete = name && number && address && detailAddress;
 
   const handleInfo = () => {
-    setSave(false);
+    setSave(false); // 폼을 닫고 배송지 정보만 표시
+  };
+
+  const handleEditInfo = () => {
+    setSave(true); // 폼을 다시 열기
   };
 
   const handleAddressSearch = () => {
     new window.daum.Postcode({
       oncomplete: function (data) {
-        let addr = ''; // 주소 변수
-        let extraAddr = ''; // 참고항목 변수
+        let addr = '';
+        let extraAddr = '';
 
         if (data.userSelectedType === 'R') {
           addr = data.roadAddress;
@@ -66,14 +70,33 @@ export default function DeliveryInfo() {
         }}
       >
         {save ? (
-          <Accordion sx={{ borderRadius: '8px', backgroundColor: 'var(--primary-bright)' }}>
+          <Accordion
+            expanded={save}
+            sx={{ borderRadius: '8px', backgroundColor: 'var(--primary-bright)' }}
+          >
             <AccordionSummary expandIcon={<ArrowDropDownIcon />} aria-controls="panel2-content" id="panel2-header">
               <Plus />
               <Typography>배송지 정보 추가하기</Typography>
             </AccordionSummary>
             <AccordionDetails>
-              <TextField sx={{ mb: 1 }} fullWidth required id="outlined-required" label="이름을 입력해주세요" onChange={(e) => setName(e.target.value)} />
-              <TextField sx={{ mb: 1 }} fullWidth required id="outlined-required" label="전화번호를 입력해주세요" onChange={(e) => setNumber(e.target.value)} />
+              <TextField
+                sx={{ mb: 1 }}
+                fullWidth
+                required
+                id="outlined-required"
+                label="이름을 입력해주세요"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+              <TextField
+                sx={{ mb: 1 }}
+                fullWidth
+                required
+                id="outlined-required"
+                label="전화번호를 입력해주세요"
+                value={number}
+                onChange={(e) => setNumber(e.target.value)}
+              />
 
               <Grid container spacing={1} sx={{ mb: 1 }}>
                 <Grid item xs={9}>
@@ -82,13 +105,10 @@ export default function DeliveryInfo() {
                     required
                     id="outlined-read-only-input"
                     label="도로명 주소를 입력해주세요"
-                    defaultValue="도로명 주소"
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
-                    slotProps={{
-                      input: {
-                        readOnly: true,
-                      },
+                    InputProps={{
+                      readOnly: true,
                     }}
                   />
                 </Grid>
@@ -105,6 +125,7 @@ export default function DeliveryInfo() {
                 required
                 id="outlined-required"
                 label="세부주소를 입력해주세요"
+                value={detailAddress}
                 onChange={(e) => setDetailAddress(e.target.value)}
               />
 
@@ -135,6 +156,14 @@ export default function DeliveryInfo() {
                 {address} {detailAddress}
               </Typography>
             </Grid>
+
+            <Button
+              variant="outlined"
+              onClick={handleEditInfo}
+              sx={{ mt: 2, width: '100%', borderRadius: '8px' }}
+            >
+              배송지 변경하기
+            </Button>
           </>
         )}
       </Paper>

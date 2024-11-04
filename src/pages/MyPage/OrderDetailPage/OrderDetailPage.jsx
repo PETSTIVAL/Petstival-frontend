@@ -20,6 +20,7 @@ function OrderDetailPage() {
   const order_id = searchParams.get('order_id');
   const [product, setProduct] = useState(null);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [orderItem, setOrderItem] = useState([]);
 
   const getProductData = async () => {
     // payment 테이블에서 payment_state가 success이고 order_id가 일치하는 데이터만 가져옴
@@ -34,41 +35,54 @@ function OrderDetailPage() {
     }
   };
 
-  const navigate = useNavigate();
+  const getOrderItemData = async () => {
+    const { data, error } = await supabase
+      .from('order_detail')
+      .select(
+        `
+    *,
+    product (
+      product_name,
+      image_url_1
+    )
+  `
+      )
+      .eq('order_id', order_id);
+
+    if (error) {
+      console.error('Error fetching data:', error);
+      return;
+    }
+
+    if (data) {
+      console.log(data);
+      setOrderItem(data);
+    }
+  };
+
+  async function cancelOrder() {
+    try {
+      const { error } = await supabase.from('order').update({ order_status: 'cancel' }).eq('order_id', order_id);
+
+      if (error) {
+        console.error('Error deleting order:', error);
+        return;
+      }
+    } catch (error) {
+      console.error('Unexpected error:', error);
+    }
+  }
 
   async function handleCancel() {
     setIsConfirmModalOpen(true);
     cancelOrder();
   }
 
-  async function cancelOrder() {
-    try {
-      const { error } = await supabase
-        .from('order')
-        .update({ order_status: 'cancel' })
-        .eq('order_id', order_id);
-
-      if (error) {
-        console.error('Error deleting order:', error);
-        return;
-      }
-
-    } catch (error) {
-      console.error('Unexpected error:', error);
-    }
-  }
-
   useEffect(() => {
     getProductData();
+    getOrderItemData();
   }, []);
 
-  // useEffect(() => {
-  //   if (product) {
-  //     console.log("Success Product:", product);
-  //   }
-  // }, [product]);
-
-  // 위치가 중요함...
   if (!product) {
     return <p>Loading product data...</p>;
   }
@@ -77,14 +91,21 @@ function OrderDetailPage() {
     <>
       <DetailBar title="주문 상세" />
       <Wrapper>
-        <OrderId order_id={order_id} created_at={product.order.created_at} />
-        <ProductInfo
-          created_at={product.order.created_at}
-          img_url_1={product.order.img_url_1}
-          product_name={product.order.product_name}
-          total_count={product.order.total_count}
-          total_price={product.order.total_price}
-        />
+        <OrderId order_id={product.order.order_title} created_at={product.order.created_at} />
+        <h3>주문 내역</h3>
+        <div>
+          {orderItem.map((item) => {
+            return (
+              <ProductInfo
+                created_at={item.created_at}
+                img_url_1={item.product.image_url_1}
+                product_name={item.product.product_name}
+                total_count={item.count}
+                total_price={item.price}
+              />
+            );
+          })}
+        </div>
         <DeliveryInfo
           delivery_name={product.order.delivery_name}
           delivery_tel={product.order.delivery_tel}

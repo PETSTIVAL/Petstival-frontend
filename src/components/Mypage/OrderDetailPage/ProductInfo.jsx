@@ -3,13 +3,11 @@ import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import ButtonBase from '@mui/material/ButtonBase';
-import { useNavigate } from 'react-router-dom';
 
 export default function ProductInfo(props) {
+  console.log(props);
   return (
     <>
-      <h3>주문 내역</h3>
-
       <Paper
         sx={(theme) => ({
           p: 2,
@@ -45,11 +43,7 @@ export default function ProductInfo(props) {
         <Grid container spacing={2}>
           <Grid item>
             <ButtonBase sx={{ width: 100, height: 100 }}>
-              <img
-                src={props.img_url_1}
-                alt={props.product_name}
-                style={{ width: 100, height: 100 }}
-              />
+              <img src={props.img_url_1} alt={props.product_name} style={{ width: 100, height: 100 }} />
             </ButtonBase>
           </Grid>
 
@@ -64,9 +58,7 @@ export default function ProductInfo(props) {
                   {props.total_count}개
                 </Typography>
 
-                <Typography sx={{ cursor: 'pointer', fontWeight: 'bold' }}>
-                  {props.total_price.toLocaleString()}원
-                </Typography>
+                <Typography sx={{ cursor: 'pointer', fontWeight: 'bold' }}>{props.total_price.toLocaleString()}원</Typography>
               </Grid>
             </Grid>
           </Grid>

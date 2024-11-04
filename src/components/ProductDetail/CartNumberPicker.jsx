@@ -3,13 +3,8 @@ import styles from './NumberPicker.module.css';
 import minusIcon from '../../assets/icons/minus.svg';
 import plusIcon from '../../assets/icons/plus.svg';
 
-const NumberPicker = ({ onCountChange }) => {
-  const [count, setCount] = useState(1);
-
-  // 화면이 렌더링될 때마다 아이템 선택 개수를 1개로 초기화
-  useEffect(() => {
-    setCount(1);
-  }, []);
+const CartNumberPicker = ({ onCountChange, initialCount }) => {
+  const [count, setCount] = useState(initialCount);
 
   const handleDecrement = () => {
     if (count > 1) {
@@ -38,4 +33,4 @@ const NumberPicker = ({ onCountChange }) => {
   );
 };
 
-export default NumberPicker;
+export default CartNumberPicker;

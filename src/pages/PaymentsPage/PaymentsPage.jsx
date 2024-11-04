@@ -1,20 +1,60 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import Navbar from '../../components/Navbar/Navbar';
-import DeliveryInfo from "../../components/PaymentsPage/DeliveryInfo";
-import DetailBar from "../../stories/DetailBar";
+import DeliveryInfo from '../../components/PaymentsPage/DeliveryInfo';
+import DetailBar from '../../stories/DetailBar';
 import OrderInfo from '../../components/PaymentsPage/OrderInfo';
+import { useLocation } from 'react-router-dom';
+import useDeliveryStore from '../../stores/useDeliveryStore';
+import useTotalStore from '../../stores/useTotalStore';
 
 const Wrapper = styled.section`
   margin-left: 24px;
   margin-right: 24px;
 `;
 
-
 function PaymentsPage() {
+  const location = useLocation();
+  const {
+    delivery_name = '', // 기본값 설정
+    delivery_tel = '',
+    delivery_addr = '',
+    delivery_addr_detail = '',
+    total_count = 1,
+    total_price = 0,
+    product_price = 0,
+  } = location.state || {};
+
+  const { setName, setNumber, setAddress, setDetailAddress } = useDeliveryStore();
+  const { setQuantity, setUnitPrice } = useTotalStore();
+
+  useEffect(() => {
+    if (location.state) {
+      setName(delivery_name);
+      setNumber(delivery_tel);
+      setAddress(delivery_addr);
+      setDetailAddress(delivery_addr_detail);
+      setQuantity(total_count);
+      setUnitPrice(product_price);
+    }
+  }, [
+    delivery_name,
+    delivery_tel,
+    delivery_addr,
+    delivery_addr_detail,
+    total_count,
+    product_price,
+    setName,
+    setNumber,
+    setAddress,
+    setDetailAddress,
+    setQuantity,
+    setUnitPrice,
+  ]);
+
   return (
     <>
-      <DetailBar title="주문하기"/>
+      <DetailBar title="주문하기" />
       <Wrapper>
         <DeliveryInfo />
         <OrderInfo />

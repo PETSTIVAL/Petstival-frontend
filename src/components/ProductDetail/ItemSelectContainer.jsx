@@ -4,7 +4,7 @@ import PriceDisplay from './PriceDisplay';
 import styles from './ItemSelectContainer.module.css';
 import useTotalStore from '../../stores/useTotalStore';
 
-const ItemSelectContainer = ({ price }) => {
+const ItemSelectContainer = ({ price, setCartQuantity }) => {
   //const numericPrice = parseInt(price.replace(/,/g, ''), 10);
 
   // 전역 상태 및 상태 업데이트 함수 가져오기
@@ -17,12 +17,13 @@ const ItemSelectContainer = ({ price }) => {
 
   const handleCountChange = (newQuantity) => {
     setQuantity(newQuantity); // 수량이 변경되면 자동으로 totalPrice가 업데이트됨
+    setCartQuantity(newQuantity);
   };
 
   return (
     <div className={styles.itemSelectContainer}>
       <p className={styles.quantityLabel}>구매 수량</p>
-      <NumberPicker onCountChange={handleCountChange} initialCount={quantity} />
+      <NumberPicker onCountChange={handleCountChange} />
       <PriceDisplay price={totalPrice} />
     </div>
   );

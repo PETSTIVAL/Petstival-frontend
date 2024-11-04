@@ -1,7 +1,8 @@
 // src/hooks/useAuth.js
 import supabase from '../services/supabaseClient';
-import { useAuthStore } from '../stores/useAuthStore';
 import supabaseAdmin from '../services/supabaseAdminClient';
+import { useAuthStore } from '../stores/useAuthStore';
+import { useCartStore } from '../stores/useCartStore';
 
 /**
  * 소셜 로그인 함수
@@ -41,6 +42,7 @@ export const signInWithProvider = async (provider) => {
  */
 export const logout = async () => {
   const { clearUser } = useAuthStore.getState();
+  const { clearCart } = useCartStore.getState();
 
   const { error } = await supabase.auth.signOut();
   if (error) {
@@ -49,6 +51,7 @@ export const logout = async () => {
   }
 
   clearUser(); // 유저 정보 초기화
+  clearCart(); // 장바구니 정보 초기화
   console.log('로그아웃 성공');
 };
 
@@ -58,6 +61,7 @@ export const logout = async () => {
  */
 export const deleteAccount = async (user) => {
   const { clearUser } = useAuthStore.getState();
+  const { clearCart } = useCartStore.getState();
 
   //   const { user, error } = await supabase.auth.getUser();
   //   console.log("탈퇴 버튼 유저 정보 : ",useUserAuthInfo);
@@ -79,6 +83,8 @@ export const deleteAccount = async (user) => {
   }
 
   clearUser(); // 유저 정보 초기화
+  clearCart(); // 장바구니 정보 초기화
+
   console.log('회원 탈퇴 성공');
   await supabase.auth.signOut();
 };

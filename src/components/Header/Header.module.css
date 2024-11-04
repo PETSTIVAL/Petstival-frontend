@@ -1,12 +1,40 @@
 .headerLayout {
-    display: flex;
-    width: 100%;
-    height: 80px;
-    padding: 26px 19px 24.337px 24px;
-    justify-content: space-between;
-    align-items: center;
-    gap: 165px;
-    flex-shrink: 0;
-    background: #FFF;
-    box-shadow: 0px 2px 4px 0px rgba(24, 119, 242, 0.08);
+  display: flex;
+  width: 100%;
+  height: 80px;
+  padding: 26px 19px 24.337px 24px;
+  justify-content: space-between;
+  align-items: center;
+  gap: 165px;
+  flex-shrink: 0;
+  background: #fff;
+  box-shadow: 0px 2px 4px 0px rgba(24, 119, 242, 0.08);
+}
+.badge {
+  display: flex;
+  width: 10px;
+  height: 10px;
+  padding: 2px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: var(--secondary-secondary-orange-default, #ff866b);
+}
+
+.badgeContent {
+  display: flex;
+  width: 8px;
+  height: 6px;
+  flex-direction: column;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #fff;
+  text-align: center;
+  font-family: Pretendard;
+  font-size: 8px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
 }

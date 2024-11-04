@@ -8,6 +8,7 @@ import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import ImageListItemBar from '@mui/material/ImageListItemBar';
 import supabase from '../../services/supabaseClient';
+import { LinearProgress } from '@mui/material';
 
 const Info = styled.div`
   display: flex;
@@ -28,6 +29,7 @@ const Detail = styled.div`
 export default function PopularPetstival() {
   const [topData, setTopData] = useState([]);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true); // 로딩 상태 추가
 
   // 최근 인기있는 펫스티벌 데이터 가져오기 및 날짜별 정렬
   const getData = async () => {
@@ -44,45 +46,62 @@ export default function PopularPetstival() {
     }
   };
 
+  const fetchData = async () => {
+    setLoading(true);
+    await getData();
+    setLoading(false);
+  };
+
   useEffect(() => {
-    getData();
+    fetchData();
   }, []);
 
   return (
     <>
-      <Info>
-        <h3>최근 인기 있는 펫스티벌</h3>
-        <Detail onClick={() => navigate('/petstival')}>자세히 보기 &gt;</Detail>
-      </Info>
-      <Carousel>
-        {topData.map((item) => {
-          const imageSrc = item.firstimage || noImage;
+      {loading ? (
+        <LinearProgress />
+      ) : (
+        <>
+          <Info>
+            <h3>최근 인기 있는 펫스티벌</h3>
+            <Detail onClick={() => navigate('/petstival')}>자세히 보기 &gt;</Detail>
+          </Info>
+          <Carousel>
+            {topData.map((item) => {
+              const imageSrc = item.firstimage || noImage;
 
-          return (
-            <Paper
-              key={item.id}
-              sx={{
-                p: 2,
-                marginBottom: '15px',
-                flexGrow: 1,
-                backgroundColor: '#fff',
-                borderRadius: '8px',
-                boxShadow: '0px 0px 8px 0px rgba(51, 51, 51, 0.08)',
-              }}
-            >
-              <div onClick={() => navigate(`/petstival/${item.id}`)} style={{ cursor: 'pointer' }}>
-                <img src={imageSrc} alt={item.title || 'No image available'} loading="lazy" style={{ width: '420px', height: '150px', objectFit: 'cover' }} />
-                <Typography variant="h6" sx={{ marginRight: '8px' }}>
-                  {item.title}
-                </Typography>
-                <Typography sx={{ marginTop: '4px' }}>
-                  {item.startdate} ~ {item.enddate}
-                </Typography>
-              </div>
-            </Paper>
-          );
-        })}
-      </Carousel>
+              return (
+                <Paper
+                  key={item.id}
+                  sx={{
+                    p: 2,
+                    marginBottom: '15px',
+                    flexGrow: 1,
+                    backgroundColor: '#fff',
+                    borderRadius: '8px',
+                    boxShadow: '0px 0px 8px 0px rgba(51, 51, 51, 0.08)',
+                  }}
+                >
+                  <div onClick={() => navigate(`/petstival/${item.id}`)} style={{ cursor: 'pointer' }}>
+                    <img
+                      src={imageSrc}
+                      alt={item.title || 'No image available'}
+                      loading="lazy"
+                      style={{ width: '420px', height: '150px', objectFit: 'cover' }}
+                    />
+                    <Typography variant="h6" sx={{ marginRight: '8px' }}>
+                      {item.title}
+                    </Typography>
+                    <Typography sx={{ marginTop: '4px' }}>
+                      {item.startdate} ~ {item.enddate}
+                    </Typography>
+                  </div>
+                </Paper>
+              );
+            })}
+          </Carousel>
+        </>
+      )}
     </>
   );
 }

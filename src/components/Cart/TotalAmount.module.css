@@ -1,0 +1,22 @@
+.totalAmountContainer {
+  display: flex;
+  justify-content: space-between; /* 왼쪽과 오른쪽 끝으로 배치 */
+  align-items: center;
+  margin-top: 40px;
+  width: 100%; /* 가로로 꽉 차게 설정 */
+}
+
+.totalLabel {
+  color: var(--gray-gray-100, #222022);
+  font-family: Pretendard;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 22px;
+}
+
+.totalValue {
+  color: var(--secondary-secondary-orange-default, #ff866b);
+  font-family: Pretendard;
+  font-size: 20px;
+  font-weight: 700;
+}

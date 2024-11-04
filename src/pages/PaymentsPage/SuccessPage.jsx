@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import supabase from '../../services/supabaseClient';
+import { useOrderItemStore } from '../../stores/useOrderItemStore';
+import { useCartStore } from '../../stores/useCartStore';
 
 function SuccessPage() {
   const [isConfirmed, setIsConfirmed] = useState(false);
@@ -9,12 +11,14 @@ function SuccessPage() {
   const orderId = searchParams.get('orderId');
   const amount = searchParams.get('amount');
   const order_id = searchParams.get('order_id');
+  const { clearOrderItem } = useOrderItemStore.getState();
+  const { cartItems, clearCart, removeCartItems } = useCartStore.getState();
 
   async function confirmPayment() {
     // TODO: API를 호출해서 서버에게 paymentKey, orderId, amount를 넘겨주세요.
     // 서버에선 해당 데이터를 가지고 승인 API를 호출하면 결제가 완료됩니다.
     // https://docs.tosspayments.com/reference#%EA%B2%B0%EC%A0%9C-%EC%8A%B9%EC%9D%B8
-    const response = await fetch('/api/payment', {
+    const response = await fetch('https://hfnchwvpqruwmlehusbs.supabase.co/functions/v1/payment', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -36,6 +40,14 @@ function SuccessPage() {
         setIsConfirmed(true);
         // payment table에 payment_state 정보를 success로 업데이트
         const { data, error } = await supabase.from('payment').update({ payment_state: 'success' }).eq('orderId', orderId);
+
+        const cartIdList = cartItems.map((item) => {
+          return item.productId;
+        });
+
+        removeCartItems(cartIdList); // 결제 성공 시 DB 장바구니 테이블에서 정보 삭제
+        clearCart(); // 결제 성공 시 장바구니 상태를 초기화
+        clearOrderItem(); // 결제 성공 시 주문 상태를 초기화
 
         if (error) {
           console.error('Error posting data:', error);
@@ -72,7 +84,7 @@ function SuccessPage() {
           </div>
 
           <div className="w-100 button-group">
-            <div className="flex" style={{ gap: '16px' }}>
+            <div className="flex" style={{ gap: '16px' }} onClick={() => clearCart()}>
               <Link to={`/`} className="btn w-100">
                 홈으로 가기
               </Link>

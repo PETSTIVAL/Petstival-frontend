@@ -22,6 +22,16 @@ function PetPage() {
   const [activeTab, setActiveTab] = useState('반려견'); // 초기 탭을 '반려견'으로 설정
 
   const navigate = useNavigate();
+  
+  // 페이지 로드 시 activeTab 설정
+  useEffect(() => {
+    const savedTab = localStorage.getItem('activeTab');
+    if (savedTab) {
+      setActiveTab(savedTab); // 저장된 탭 설정
+      localStorage.removeItem('activeTab'); // 설정 후 초기화
+    }
+  }, []);
+
   useEffect(() => {
     if (!userName) {
       navigate('/login'); // user가 없는 경우 login 페이지로 리디렉션
@@ -55,8 +65,6 @@ function PetPage() {
     try {
       const { data, error } = await supabase.from('user_festival').select('*, festivals(*)').eq('user_id', userId);
 
-      // if (error) throw error;
-      // setUserFestivals(data.map((item) => item.festivals));
       if (error) throw error;
       setUserFestivals(
         data.map((item) => ({
@@ -87,7 +95,6 @@ function PetPage() {
 
   // 인증 버튼 클릭 핸들러
   const handleVerify = (festivalId) => {
-    // 인증 로직을 구현하면 수정할 부분
     console.log(`페스티벌 ${festivalId} 인증 요청`);
   };
 

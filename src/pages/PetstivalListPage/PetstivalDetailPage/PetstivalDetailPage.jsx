@@ -15,7 +15,6 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import formatDate from '../../../utils/formatDate';
 import YesNoModal from '../../../components/Common/Modal/YesNoModal';
-import DefaultModal from '../../../components/Common/Modal/DefaultModal';
 
 const PageContainer = styled.div`
   width: 100%;
@@ -146,7 +145,7 @@ const Button = styled.button`
 `;
 
 export default function PetstivalDetailPage() {
-  const { id } = useParams(); // 페이지 URL에서 festivals_id 추출
+  const { id } = useParams();
   const navigate = useNavigate();
   const [festival, setFestival] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -154,28 +153,30 @@ export default function PetstivalDetailPage() {
   const [recommendations, setRecommendations] = useState([]);
   const [isParticipating, setIsParticipating] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
-  const [userId, setUserId] = useState(null); // 동적 user ID 상태
-  const [showConfirmationModal, setShowConfirmationModal] = useState(false); // YesNoModal 열림 상태
-  const [showResultModal, setShowResultModal] = useState(false); // DefaultModal 열림 상태
-  const [modalContent, setModalContent] = useState(''); // DefaultModal 및 YesNoModal의 메시지
-  const [modalTitle, setModalTitle] = useState(''); // DefaultModal 및 YesNoModal의 제목
-  const [onConfirm, setOnConfirm] = useState(null); // YesNoModal에서 확인 클릭 시 실행할 함수
-  const [isYesNoModalOpen, setIsYesNoModalOpen] = useState(false); // YesNoModal 열림 상태
-  const [isDefaultModalOpen, setIsDefaultModalOpen] = useState(false); // DefaultModal 열림 상태
-  const [modalMessage, setModalMessage] = useState(''); // DefaultModal에 표시할 메시지
-  
+  const [userId, setUserId] = useState(null);
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
+  const [isResultModalOpen, setIsResultModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
 
-  // 페스티벌 데이터와 참여 상태 확인
+  // getStatus 함수 정의
+  const getStatus = (startDate, endDate) => {
+    const today = new Date();
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    if (start > today) return { label: '진행예정', color: '#FF866B', borderColor: '#FF866B', backgroundColor: '#ffece8' };
+    else if (start <= today && end >= today) return { label: '진행중', color: '#2B91FF', borderColor: '#2B91FF', backgroundColor: '#EEF6FF' };
+    else return { label: '진행완료', color: '#838283', borderColor: '#838283', backgroundColor: '#F5F5F5' };
+  };
+
   useEffect(() => {
     const fetchFestival = async () => {
       try {
         const { data, error } = await supabase.from('festivals').select('*, category_id, homepage_url').eq('id', id).single();
-
         if (error) throw error;
         if (!data) throw new Error('Festival data not found.');
         setFestival(data);
 
-        // 추천 상품 로드
         if (data?.category_id) {
           const { data: products, error: productsError } = await supabase
             .from('product')
@@ -187,7 +188,6 @@ export default function PetstivalDetailPage() {
           setRecommendations(products);
         }
 
-        // 로그인된 사용자 ID와 참여 상태 확인
         const { data: userData } = await supabase.auth.getUser();
         if (userData?.user) {
           setUserId(userData.user.id);
@@ -217,21 +217,19 @@ export default function PetstivalDetailPage() {
     fetchFestival();
   }, [id]);
 
-  // 참여 신청 또는 취소 처리 함수
   const handleParticipation = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
-      navigate('/login'); // 로그인 페이지로 리디렉션
+      navigate('/login');
       return;
     }
     setUserId(user.id);
-    setIsYesNoModalOpen(true);
+    setIsConfirmationModalOpen(true);
   };
 
   const confirmParticipationChange = async () => {
     try {
       if (isParticipating) {
-        // 참여 취소
         const { error } = await supabase
           .from('user_festival')
           .delete()
@@ -239,9 +237,8 @@ export default function PetstivalDetailPage() {
           .eq('fetstivals_id', parseInt(id));
         if (error) throw error;
         setIsParticipating(false);
-        setModalMessage('신청이 취소되었습니다.');
+        setModalMessage('신청이 취소되었습니다. 페스티벌 페이지로 이동하여 확인해보시겠어요?');
       } else {
-        // 참여 신청
         const { error } = await supabase.from('user_festival').insert({
           user_id: userId,
           fetstivals_id: parseInt(id),
@@ -250,26 +247,25 @@ export default function PetstivalDetailPage() {
         });
         if (error) throw error;
         setIsParticipating(true);
-        setModalMessage('신청이 완료되었습니다.');
+        setModalMessage('참여 신청이 완료되었습니다. 페스티벌 페이지로 이동하여 확인해보시겠어요?');
       }
-      setIsDefaultModalOpen(true); // DefaultModal을 여는 상태
+      setIsResultModalOpen(true);
     } catch (error) {
       console.error('참여 상태 변경 중 오류 발생:', error);
     }
-    setIsYesNoModalOpen(false); // YesNoModal 닫기
+    setIsConfirmationModalOpen(false);
   };
 
-  const getStatus = (startDate, endDate) => {
-    const today = new Date();
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-
-    if (start > today) return { label: '진행예정', color: '#FF866B', borderColor: '#FF866B', backgroundColor: '#ffece8' };
-    else if (start <= today && end >= today) return { label: '진행중', color: '#2B91FF', borderColor: '#2B91FF', backgroundColor: '#EEF6FF' };
-    else return { label: '진행완료', color: '#838283', borderColor: '#838283', backgroundColor: '#F5F5F5' };
+  const handleResultModalConfirm = () => {
+    localStorage.setItem('activeTab', '펫스티벌');
+    navigate('/pet');
   };
 
-  if (loading) return <LinearProgress />; // 로딩 중일 때 Progress Bar 표시
+  const handleResultModalClose = () => {
+    setIsResultModalOpen(false);
+  };
+
+  if (loading) return <LinearProgress />;
   if (error) return <p style={{ color: 'red' }}>오류: {error}</p>;
 
   const { title, startdate, enddate, location, tel, firstimage, mapx, mapy, homepage_url } = festival;
@@ -322,7 +318,6 @@ export default function PetstivalDetailPage() {
               variant={backgroundColor ? 'filled' : 'outlined'}
             />
           </div>
-
           <div style={{ color: 'var(--gray-60)', fontSize: '16px' }}>
             {formatDate(startdate)} - {formatDate(enddate)}
           </div>
@@ -340,14 +335,12 @@ export default function PetstivalDetailPage() {
               {tel}
             </a>
           </div>
-
           <div style={{ margin: '4px 0 24px 0', fontSize: '16px', color: 'var(--gray-60)' }}>
             홈페이지
             <a style={{ marginLeft: '8px', color: '#0E8EFF' }} title="바로가기" href={homepage_url} target="_blank" rel="noopener noreferrer">
               {homepage_url ? '바로가기' : '제공된 링크가 없어요.'}
             </a>
           </div>
-
           {label !== '진행완료' && (
             <Button onClick={handleParticipation} disabled={isVerified}>
               {isVerified ? '참여 완료' : isParticipating ? '신청 취소' : '참여 신청'}
@@ -375,18 +368,22 @@ export default function PetstivalDetailPage() {
         </RecommendationsContainer>
       </Wrapper>
       <Navbar selectedMenu="Home" />
+
       <YesNoModal
         title={isParticipating ? '신청을 취소하시겠습니까?' : '정말 신청하시겠습니까?'}
         content={isParticipating ? '신청을 취소하시겠습니까?' : '정말 신청하시겠습니까?'}
-        isOpen={isYesNoModalOpen}
-        setIsOpen={setIsYesNoModalOpen}
+        isOpen={isConfirmationModalOpen}
+        setIsOpen={setIsConfirmationModalOpen}
         onYesClick={confirmParticipationChange}
       />
-      <DefaultModal
+
+      <YesNoModal
         title="알림"
-        content={modalMessage} // modalMessage를 사용
-        isOpen={isDefaultModalOpen}
-        setIsOpen={setIsDefaultModalOpen}
+        content={modalMessage}
+        isOpen={isResultModalOpen}
+        setIsOpen={setIsResultModalOpen}
+        onYesClick={handleResultModalConfirm}
+        onNoClick={handleResultModalClose}
       />
     </PageContainer>
   );

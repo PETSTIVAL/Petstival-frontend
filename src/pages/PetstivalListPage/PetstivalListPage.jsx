@@ -15,7 +15,6 @@ import { LinearProgress } from '@mui/material';
 import formatDate from '../../utils/formatDate';
 import ButtonSmall from '../../components/Common/Button/ButtonSmall';
 import YesNoModal from '../../components/Common/Modal/YesNoModal';
-import DefaultModal from '../../components/Common/Modal/DefaultModal';
 
 const Container = styled.div`
   width: 100%;
@@ -103,15 +102,6 @@ export default function PetstivalListPage() {
   };
 
   useEffect(() => {
-    const fetchUserId = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (user) {
-        setUserId(user.id);
-      }
-    };
-    fetchUserId();
     getData();
   }, [userId]);
 
@@ -157,7 +147,7 @@ export default function PetstivalListPage() {
           ...prev,
           [festivalId]: { isParticipating: false, verified: false },
         }));
-        setModalMessage('참여가 취소되었습니다.');
+        setModalMessage('신청이 취소되었습니다. 페스티벌 페이지로 이동하여 확인해보시겠어요?');
       } else {
         // 참여 신청
         const { error } = await supabase.from('user_festival').insert({
@@ -171,14 +161,24 @@ export default function PetstivalListPage() {
           ...prev,
           [festivalId]: { isParticipating: true, verified: false },
         }));
-        setModalMessage('참여 신청이 완료되었습니다.');
+        setModalMessage('참여 신청이 완료되었습니다. 페스티벌 페이지로 이동하여 확인해보시겠어요?');
       }
-      setShowResultModal(true); // 완료 모달 열기
+      setShowResultModal(true); // YesNoModal 열기
     } catch (error) {
       console.error('참여 상태 변경 중 오류 발생:', error);
     } finally {
-      setShowConfirmationModal(false); // 확인 모달 닫기
+      setShowConfirmationModal(false); // 기존 확인 모달 닫기
     }
+  };
+  
+  // 모달에서 예를 누르면 /pet 페이지로 이동하고, 계속 둘러볼게요를 선택하면 모달 닫기
+  const handleResultModalConfirm = () => {
+    localStorage.setItem('activeTab', '펫스티벌'); // 기본 탭을 '펫스티벌'로 설정
+    navigate('/pet');
+  };
+  
+  const handleResultModalClose = () => {
+    setShowResultModal(false);
   };
 
   return (
@@ -271,11 +271,13 @@ export default function PetstivalListPage() {
         onYesClick={confirmParticipationChange}
       />
 
-      <DefaultModal
+      <YesNoModal
         title="알림"
         content={modalMessage}
         isOpen={showResultModal}
         setIsOpen={setShowResultModal}
+        onYesClick={handleResultModalConfirm} // "예"를 누르면 /pet로 이동
+        onNoClick={handleResultModalClose} // "계속 둘러볼게요"를 누르면 모달 닫기
       />
     </Container>
   );

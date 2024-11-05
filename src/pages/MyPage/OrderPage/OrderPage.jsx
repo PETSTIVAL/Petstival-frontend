@@ -52,7 +52,7 @@ function OrderPage() {
         )
         .eq('payment_state', 'success')
         .order('created_at', { ascending: false });
-      console.log('Fetched Data:', data);
+
       if (error) throw error;
 
       const filteredData = data?.filter((item) => item.order.user_id === user.id);

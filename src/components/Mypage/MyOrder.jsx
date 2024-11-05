@@ -3,7 +3,6 @@ import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import ButtonBase from '@mui/material/ButtonBase';
-import image1 from '../../assets/info_image.png';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import supabase from '../../services/supabaseClient';

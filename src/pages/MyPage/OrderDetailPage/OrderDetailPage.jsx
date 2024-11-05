@@ -24,7 +24,12 @@ function OrderDetailPage() {
 
   const getProductData = async () => {
     // payment 테이블에서 payment_state가 success이고 order_id가 일치하는 데이터만 가져옴
-    const { data, error } = await supabase.from('payment').select('order_id, order(*)').eq('payment_state', 'success').eq('order_id', order_id).single(); // 일치하는 정보 1개만 가져옴
+    const { data, error } = await supabase
+      .from('payment')
+      .select('order_id, order(*)')
+      .eq('payment_state', 'success')
+      .eq('order_id', order_id)
+      .single();
     if (error) {
       console.error('Error fetching data:', error);
       return;
@@ -55,7 +60,6 @@ function OrderDetailPage() {
     }
 
     if (data) {
-      console.log(data);
       setOrderItem(data);
     }
   };
@@ -97,6 +101,7 @@ function OrderDetailPage() {
           {orderItem.map((item) => {
             return (
               <ProductInfo
+                key={item.product_id}  // Unique key added for each ProductInfo component
                 created_at={item.created_at}
                 img_url_1={item.product.image_url_1}
                 product_name={item.product.product_name}

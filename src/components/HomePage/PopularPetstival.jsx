@@ -3,27 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Carousel from 'react-material-ui-carousel';
 import Paper from '@mui/material/Paper';
-import Typography from '@mui/material/Typography';
-import ImageList from '@mui/material/ImageList';
-import ImageListItem from '@mui/material/ImageListItem';
-import ImageListItemBar from '@mui/material/ImageListItemBar';
 import supabase from '../../services/supabaseClient';
 import { LinearProgress } from '@mui/material';
+import ShowMoreButton from '../Common/Button/ShowMoreButton';
+import formatDate from '../../utils/formatDate';
 
 const Info = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-`;
-
-const Detail = styled.div`
-  color: var(--gray-gray-60, #838283);
-  font-family: Pretendard;
-  font-size: 17px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 18px;
-  cursor: pointer;
+  margin: 28px 4px 8px 4px;
 `;
 
 export default function PopularPetstival() {
@@ -63,8 +52,8 @@ export default function PopularPetstival() {
       ) : (
         <>
           <Info>
-            <h3>최근 인기 있는 펫스티벌</h3>
-            <Detail onClick={() => navigate('/petstival')}>자세히 보기 &gt;</Detail>
+            <h1>최근 인기 있는 펫스티벌</h1>
+            <ShowMoreButton title="자세히 보기" onClick={() => navigate('/petstival')} />
           </Info>
           <Carousel>
             {topData.map((item) => {
@@ -75,11 +64,12 @@ export default function PopularPetstival() {
                   key={item.id}
                   sx={{
                     p: 2,
-                    marginBottom: '15px',
                     flexGrow: 1,
+                    margin: '0 4px',
+                    padding: '16px',
                     backgroundColor: '#fff',
                     borderRadius: '8px',
-                    boxShadow: '0px 0px 8px 0px rgba(51, 51, 51, 0.08)',
+                    boxShadow: '0px 0px 8px 0px rgba(36, 32, 32, 0.08)',
                   }}
                 >
                   <div onClick={() => navigate(`/petstival/${item.id}`)} style={{ cursor: 'pointer' }}>
@@ -87,14 +77,19 @@ export default function PopularPetstival() {
                       src={imageSrc}
                       alt={item.title || 'No image available'}
                       loading="lazy"
-                      style={{ width: '420px', height: '150px', objectFit: 'cover' }}
+                      style={{
+                        width: '100%',
+                        height: '150px',
+                        objectFit: 'cover',
+                        borderRadius: '8px',
+                        marginBottom: '8px',
+                        border: '1px solid var(--gray-20)',
+                      }}
                     />
-                    <Typography variant="h6" sx={{ marginRight: '8px' }}>
-                      {item.title}
-                    </Typography>
-                    <Typography sx={{ marginTop: '4px' }}>
-                      {item.startdate} ~ {item.enddate}
-                    </Typography>
+                    <h2>{item.title}</h2>
+                    <div style={{ color: 'var(--gray-60)' }}>
+                      {formatDate(item.startdate)} ~ {formatDate(item.enddate)}
+                    </div>
                   </div>
                 </Paper>
               );

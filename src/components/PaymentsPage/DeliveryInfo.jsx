@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import useDeliveryStore from '../../stores/useDeliveryStore';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
@@ -23,6 +23,10 @@ export default function DeliveryInfo() {
 
   const handleEditInfo = () => {
     setSave(true); // 폼을 다시 열기
+  };
+
+  const handleAccordionToggle = () => {
+    setSave((prevSave) => !prevSave); // save 상태를 토글하여 아코디언을 닫거나 엽니다.
   };
 
   const handleAddressSearch = () => {
@@ -72,6 +76,7 @@ export default function DeliveryInfo() {
         {save ? (
           <Accordion
             expanded={save}
+            onChange={handleAccordionToggle} // 아코디언이 클릭될 때마다 상태를 토글합니다.
             sx={{ borderRadius: '8px', backgroundColor: 'var(--primary-bright)' }}
           >
             <AccordionSummary expandIcon={<ArrowDropDownIcon />} aria-controls="panel2-content" id="panel2-header">
@@ -157,11 +162,7 @@ export default function DeliveryInfo() {
               </Typography>
             </Grid>
 
-            <Button
-              variant="outlined"
-              onClick={handleEditInfo}
-              sx={{ mt: 2, width: '100%', borderRadius: '8px' }}
-            >
+            <Button variant="outlined" onClick={handleEditInfo} sx={{ mt: 2, width: '100%', borderRadius: '8px' }}>
               배송지 변경하기
             </Button>
           </>

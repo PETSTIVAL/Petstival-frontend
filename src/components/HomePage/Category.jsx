@@ -7,6 +7,34 @@ import Food from '../../assets/icons/category/foods.svg?react';
 import Clean from '../../assets/icons/category/clean.svg?react';
 import Outdoor from '../../assets/icons/category/outdoor.svg?react';
 import Toy from '../../assets/icons/category/toy.svg?react';
+import styled from 'styled-components';
+
+const Wrapper = styled.div`
+  width: calc(100% - 8px);
+  margin: 0 4px;
+`;
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 96px;
+  padding: 20px 24px;
+  background-color: var(--white);
+  color: var(--gray-100);
+  border-radius: 8px;
+`;
+
+const CategoryButtonWrapper = styled.div`
+  width: 64px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 600;
+`;
 
 export default function Category() {
   const navigate = useNavigate();
@@ -16,60 +44,27 @@ export default function Category() {
   };
 
   return (
-    <>
-      <h3>카테고리</h3>
+    <Wrapper>
+      <h1 style={{ marginBottom: '8px' }}>카테고리</h1>
+      <Container className="drop-shadow-default">
+        <CategoryButtonWrapper onClick={() => handleNavigate('사료/간식')}>
+          <Food />
+          <div>사료/간식</div>
+        </CategoryButtonWrapper>
+        <CategoryButtonWrapper onClick={() => handleNavigate('위생/배변')}>
+          <Clean />
+          <div>위생/배변</div>
+        </CategoryButtonWrapper>
 
-      <Paper
-        sx={{
-          p: 2,
-          margin: 'auto',
-          marginBottom: '15px',
-          marginTop: '5px',
-          maxWidth: 600,
-          flexGrow: 1,
-          borderRadius: '8px',
-          backgroundColor: '#fff',
-          boxShadow: '0px 0px 8px 0px rgba(51, 51, 51, 0.08)',
-        }}
-      >
-        <Grid container spacing={10}>
-          <Grid item onClick={() => handleNavigate('사료/간식')}>
-            <Grid item xs container direction="column" alignItems="center">
-              <Food />
-              <Typography variant="button" sx={{ display: 'block' }}>
-                사료/간식
-              </Typography>
-            </Grid>
-          </Grid>
-
-          <Grid item onClick={() => handleNavigate('위생/배변')}>
-            <Grid item xs container direction="column" alignItems="center">
-              <Clean />
-              <Typography variant="button" sx={{ display: 'block' }}>
-                위생/배변
-              </Typography>
-            </Grid>
-          </Grid>
-
-          <Grid item onClick={() => handleNavigate('의류')}>
-            <Grid item xs container direction="column" alignItems="center">
-              <Outdoor />
-              <Typography variant="button" sx={{ display: 'block' }}>
-                의류
-              </Typography>
-            </Grid>
-          </Grid>
-
-          <Grid item onClick={() => handleNavigate('장난감')}>
-            <Grid item xs container direction="column" alignItems="center">
-              <Toy />
-              <Typography variant="button" sx={{ display: 'block' }}>
-                장난감
-              </Typography>
-            </Grid>
-          </Grid>
-        </Grid>
-      </Paper>
-    </>
+        <CategoryButtonWrapper onClick={() => handleNavigate('의류')}>
+          <Outdoor />
+          <div>의류</div>
+        </CategoryButtonWrapper>
+        <CategoryButtonWrapper onClick={() => handleNavigate('장난감')}>
+          <Toy />
+          <div>장난감</div>
+        </CategoryButtonWrapper>
+      </Container>
+    </Wrapper>
   );
 }

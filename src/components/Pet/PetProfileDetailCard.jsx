@@ -1,7 +1,7 @@
 import styles from './PetProfileDetailCard.module.css';
 import PetProfileIcon from '../../assets/icons/profile-pet.svg?react';
 import formatDate from '../../utils/formatDate';
-import CancelIcon from '../../assets/icons/cancel.svg?react';
+import TrashIcon from '../../assets/icons/trash.svg?react';
 
 function PetProfileCard({ petData, onDeleteClick }) {
   const birth_date_calc = petData.birth_date ? formatDate(petData.birth_date) : '';
@@ -11,7 +11,7 @@ function PetProfileCard({ petData, onDeleteClick }) {
   return (
     <div className={`${styles.container} drop-shadow-default`}>
       <div className={`${styles.cancelButtonContainer}`} onClick={onDeleteClick}>
-        <CancelIcon />
+        <TrashIcon classNmae={styles.trashIcon} />
       </div>
       <div className={`${styles.wrapper}`}>
         <div className={`${styles.profileImgContainer}`}>

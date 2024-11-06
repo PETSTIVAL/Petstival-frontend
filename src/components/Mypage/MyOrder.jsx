@@ -61,62 +61,66 @@ export default function MyOrder() {
 
   return (
     <>
-      <div>
-        <RowWrapper style={{ marginBottom: '12px' }}>
-          <h1>최근 구매 내역</h1>
-          <ShowMoreButton title="주문 내역 보기" onClick={() => navigate('/mypage/order')} />
-        </RowWrapper>
-        {successProduct ? (
-          successProduct &&
-          successProduct.length > 0 && (
-            <Container className="drop-shadow-default">
-              <RowWrapper>
-                {successProduct[0].order.order_status === 'cancel' ? (
-                  <></>
-                ) : (
-                  <div style={{ fontSize: '13px', fontWeight: '400', color: 'var(--gray-40)' }}>
-                    {new Date(successProduct[0].order.created_at)
-                      .toLocaleString('ko-KR', {
-                        year: 'numeric',
-                        month: '2-digit',
-                        day: '2-digit',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        hour12: false,
-                      })
-                      .replace(/\.$/, '')}
-                    &nbsp; 결제 완료
-                  </div>
-                )}
-                <>
+      {successProduct && successProduct.length > 0 && (
+        <div>
+          <RowWrapper style={{ marginBottom: '12px' }}>
+            <h1>최근 구매 내역</h1>
+            <ShowMoreButton title="주문 내역 보기" onClick={() => navigate('/mypage/order')} />
+          </RowWrapper>
+          {successProduct ? (
+            successProduct &&
+            successProduct.length > 0 && (
+              <Container className="drop-shadow-default">
+                <RowWrapper>
                   {successProduct[0].order.order_status === 'cancel' ? (
-                    <div style={{ fontSize: '12px', fontWeight: '500', color: '#EA4646' }}>주문 취소</div>
+                    <></>
                   ) : (
-                    <ShowMoreButton title="주문 상세" onClick={() => navigate(`/mypage/order/detail?order_id=${successProduct[0].order_id}`)} />
+                    <div style={{ fontSize: '13px', fontWeight: '400', color: 'var(--gray-40)' }}>
+                      {new Date(successProduct[0].order.created_at)
+                        .toLocaleString('ko-KR', {
+                          year: 'numeric',
+                          month: '2-digit',
+                          day: '2-digit',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                          hour12: false,
+                        })
+                        .replace(/\.$/, '')}
+                      &nbsp; 결제 완료
+                    </div>
                   )}
-                </>
-              </RowWrapper>
+                  <>
+                    {successProduct[0].order.order_status === 'cancel' ? (
+                      <div style={{ fontSize: '12px', fontWeight: '500', color: '#EA4646' }}>주문 취소</div>
+                    ) : (
+                      <ShowMoreButton title="주문 상세" onClick={() => navigate(`/mypage/order/detail?order_id=${successProduct[0].order_id}`)} />
+                    )}
+                  </>
+                </RowWrapper>
 
-              <RowWrapper style={{ justifyContent: 'start', gap: '16px' }}>
-                <img
-                  src={successProduct[0].order.img_url_1}
-                  alt={successProduct[0].order.order_title}
-                  style={{ width: '80px', height: '80px', borderRadius: '8px' }}
-                />
-                <div>
-                  <div style={{ width: '100%', fontSize: '16px', fontWeight: '500' }}>{successProduct[0].order.order_title}</div>
-                  <div style={{ fontSize: '14px', fontWeight: '400', color: 'var(--gray-60)' }}>{successProduct[0].order.total_count}개</div>
-                  <div style={{ fontSize: '16px', fontWeight: '700', color: 'var(--gray-100)' }}>{successProduct[0].order.total_price.toLocaleString()}원</div>
-                </div>
-              </RowWrapper>
-            </Container>
-          )
-        ) : (
-          <div style={{ width: '100%', height: '100px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <CircularProgress />
-          </div>
-        )}
-      </div>
+                <RowWrapper style={{ justifyContent: 'start', gap: '16px' }}>
+                  <img
+                    src={successProduct[0].order.img_url_1}
+                    alt={successProduct[0].order.order_title}
+                    style={{ width: '80px', height: '80px', borderRadius: '8px' }}
+                  />
+                  <div>
+                    <div style={{ width: '100%', fontSize: '16px', fontWeight: '500' }}>{successProduct[0].order.order_title}</div>
+                    <div style={{ fontSize: '14px', fontWeight: '400', color: 'var(--gray-60)' }}>{successProduct[0].order.total_count}개</div>
+                    <div style={{ fontSize: '16px', fontWeight: '700', color: 'var(--gray-100)' }}>
+                      {successProduct[0].order.total_price.toLocaleString()}원
+                    </div>
+                  </div>
+                </RowWrapper>
+              </Container>
+            )
+          ) : (
+            <div style={{ width: '100%', height: '100px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <CircularProgress />
+            </div>
+          )}
+        </div>
+      )}
     </>
   );
 }

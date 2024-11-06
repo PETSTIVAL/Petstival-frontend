@@ -16,11 +16,11 @@ const Container = styled.div`
   border-radius: 12px;
 `;
 
-function NoPetsCard() {
+function NoPetsCard({ content }) {
   return (
     <Container>
       <PetProfileGray />
-      <div>{`등록한 반려견 프로필이 없어요.`}</div>
+      <div>{content}</div>
     </Container>
   );
 }

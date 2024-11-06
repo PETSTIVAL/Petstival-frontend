@@ -12,6 +12,7 @@ const Button = styled.button`
   font-weight: 700;
   background-color: var(--primary-default);
   color: var(--white);
+  cursor: pointer;
 
   &:active {
     background-color: var(--primary-darken);

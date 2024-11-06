@@ -18,7 +18,7 @@ function SuccessPage() {
     // TODO: API를 호출해서 서버에게 paymentKey, orderId, amount를 넘겨주세요.
     // 서버에선 해당 데이터를 가지고 승인 API를 호출하면 결제가 완료됩니다.
     // https://docs.tosspayments.com/reference#%EA%B2%B0%EC%A0%9C-%EC%8A%B9%EC%9D%B8
-    const response = await fetch('/api/payment', {
+    const response = await fetch('https://hfnchwvpqruwmlehusbs.supabase.co/functions/v1/payment', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -39,7 +39,10 @@ function SuccessPage() {
         // 결제 성공 비즈니스 로직을 구현
         setIsConfirmed(true);
         // payment table에 payment_state 정보를 success로 업데이트
-        const { data, error } = await supabase.from('payment').update({ payment_state: 'success' }).eq('orderId', orderId);
+        const { data, error } = await supabase.from('payment').update({ 
+          payment_state: 'success', 
+          payment_key: paymentKey
+        }).eq('orderId', orderId);
 
         const cartIdList = cartItems.map((item) => {
           return item.productId;

@@ -1,17 +1,30 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { corsHeaders } from '../_shared/cors.ts';
+import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { corsHeaders } from '../_shared/cors.ts';
 
+const widgetSecretKey = Deno.env.get('WIDGET_SECRET_KEY');
 const widgetSecretKey = Deno.env.get('WIDGET_SECRET_KEY');
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
-  // Handle the actual POST request
-  if (req.method === "POST" && req.url.includes("/payment")) {
+
+  if (req.method === "POST" &&  req.url === "http://edge-runtime.supabase.com/payment") {
     const { paymentKey, orderId, amount } = await req.json();
     const encryptedSecretKey = "Basic " + btoa(widgetSecretKey + ":");
+    const encryptedSecretKey = "Basic " + btoa(widgetSecretKey + ":");
 
+    try {
+      const response = await fetch("https://api.tosspayments.com/v1/payments/confirm", {
+        method: "POST",
+        headers: {
+          Authorization: encryptedSecretKey,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ orderId, amount, paymentKey }),
+      });
     try {
       const response = await fetch("https://api.tosspayments.com/v1/payments/confirm", {
         method: "POST",
@@ -33,6 +46,13 @@ Deno.serve(async (req) => {
         const errorInfo = { code: data.code || "UNKNOWN_ERROR", message: data.message || "An error occurred" }; // 에러 정보 객체 생성
         throw { ...errorInfo }; // 사용자 정의 에러 객체 던지기
       }
+      return new Response(JSON.stringify(data), {
+        status: 200,
+        headers: {
+          ...corsHeaders,
+          "Content-Type": "application/json",
+        },
+      });
       return new Response(JSON.stringify(data), {
         status: 200,
         headers: {

@@ -12,6 +12,29 @@ import { useCartStore } from '../../stores/useCartStore';
 import YesNoModal from '../../components/Common/Modal/YesNoModal';
 import DefaultModal from '../../components/Common/Modal/DefaultModal';
 import { useOrderItemStore } from '../../stores/useOrderItemStore';
+import styled from 'styled-components';
+import { CircularProgress } from '@mui/material';
+
+const Container = styled.div`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: space-between;
+  overflow: hidden;
+  width: 100%;
+  height: 100svh;
+`;
+
+const Wrapper = styled.div`
+  /* height: 100%; */
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+  overflow-y: auto;
+`;
 
 const ProductDetailPage = () => {
   const { id } = useParams();
@@ -38,9 +61,9 @@ const ProductDetailPage = () => {
     loadProduct();
   }, [fetchProducts, getProductById, id]);
 
-  if (!product) {
-    return <p>Loading product details...</p>;
-  }
+  // if (!product) {
+  //   return <p>Loading product details...</p>;
+  // }
 
   const handleAddToCart = async () => {
     if (!user) {
@@ -93,37 +116,45 @@ const ProductDetailPage = () => {
   };
 
   return (
-    <>
+    <Container>
       <Header />
-      <div className={styles.detailContainer}>
-        <img src={product.image_url_1} alt={product.product_name} />
-        <div className={styles.infoTextWrapper}>
-          <h2 className={styles.titleText}>{product.product_name}</h2>
-          <p className={styles.contentText}>{product.contents}</p>
-          <p className={styles.priceTextOrange}>{product.price.toLocaleString()}원</p>
+      {product ? (
+        <Wrapper>
+          <img className={styles.productDetailImage} src={product.image_url_1} alt={product.product_name} />
+          <div className={styles.detailContainer}>
+            <div className={styles.infoTextWrapper}>
+              <h2 className={styles.titleText}>{product.product_name}</h2>
+              <div className={styles.contentText}>{product.contents}</div>
+              <div className={styles.priceTextOrange}>{product.price.toLocaleString()}원</div>
+            </div>
+            <ItemSelectContainer price={product.price} setCartQuantity={setCartQuantity} />
+            <div className={styles.buttonWrapper}>
+              <ButtonMedium children={'장바구니 담기'} sub={'secondary'} onClick={handleAddToCart} />
+              <ButtonMedium children={'구매하기'} sub={'primary'} onClick={handleBuyNow} />
+            </div>
+          </div>
+          <YesNoModal
+            title={`장바구니 확인`}
+            content={`장바구니에 상품을 담았어요.\n장바구니로 이동할까요?`}
+            isOpen={isConfirmModalOpen}
+            setIsOpen={() => setIsConfirmModalOpen(!isConfirmModalOpen)}
+            onYesClick={() => navigate('/cart')}
+          />
+          <DefaultModal
+            title={'장바구니 담기 실패'}
+            content={'장바구니에 담기지 않았어요.\n다시 시도해주세요.'}
+            isOpen={isFailedModalOpen}
+            setIsOpen={setIsFailedModalOpen}
+            onYesClick={null}
+          />
+        </Wrapper>
+      ) : (
+        <div style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <CircularProgress />
         </div>
-        <ItemSelectContainer price={product.price} setCartQuantity={setCartQuantity} />
-        <div className={styles.buttonWrapper}>
-          <ButtonMedium children={'장바구니 담기'} sub={'secondary'} onClick={handleAddToCart} />
-          <ButtonMedium children={'구매하기'} sub={'primary'} onClick={handleBuyNow} />
-        </div>
-      </div>
+      )}
       <Navbar selectedMenu="Shop" />
-      <YesNoModal
-        title={`장바구니 확인`}
-        content={`장바구니에 상품을 담았어요.\n장바구니로 이동할까요?`}
-        isOpen={isConfirmModalOpen}
-        setIsOpen={() => setIsConfirmModalOpen(!isConfirmModalOpen)}
-        onYesClick={() => navigate('/cart')}
-      />
-      <DefaultModal
-        title={'장바구니 담기 실패'}
-        content={'장바구니에 담기지 않았어요.\n다시 시도해주세요.'}
-        isOpen={isFailedModalOpen}
-        setIsOpen={setIsFailedModalOpen}
-        onYesClick={null}
-      />
-    </>
+    </Container>
   );
 };
 

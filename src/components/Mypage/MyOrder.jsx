@@ -83,17 +83,23 @@ export default function MyOrder() {
             >
               <Grid item>
                 <Typography variant="body2" component="div">
-                  {new Date(successProduct[successProduct.length - 1].order.created_at)
-                    .toLocaleString('ko-KR', {
-                      year: 'numeric',
-                      month: '2-digit',
-                      day: '2-digit',
-                      hour: '2-digit',
-                      minute: '2-digit',
-                      hour12: false,
-                    })
-                    .replace(/\.$/, '')}
-                  &nbsp; 결제 완료
+                  {successProduct[successProduct.length - 1].order.order_status === 'cancel' ? (
+                    <Typography></Typography>
+                  ) : (
+                    <>
+                      {new Date(successProduct[successProduct.length - 1].order.created_at)
+                        .toLocaleString('ko-KR', {
+                          year: 'numeric',
+                          month: '2-digit',
+                          day: '2-digit',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                          hour12: false,
+                        })
+                        .replace(/\.$/, '')}
+                      &nbsp; 결제 완료
+                    </>
+                  )}
                 </Typography>
               </Grid>
 

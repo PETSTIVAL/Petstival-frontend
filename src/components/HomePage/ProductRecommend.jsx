@@ -97,7 +97,7 @@ export default function ProductRecommend() {
         <h1>펫스티벌 추천 상품</h1>
         <ShowMoreButton title="추천 상품 더보기" onClick={() => navigate('/products/petstival')} />
       </Info>
-      <Container className="drop-shadow-default">
+      <Container className="drop-shadow-default" onClick={() => navigate(`/products/59c0c21e-b22d-4f79-9347-87bdbee66275`)}>
         <img
           src={filteredProduct[0].image_url_1}
           alt={filteredProduct[0].product_name}

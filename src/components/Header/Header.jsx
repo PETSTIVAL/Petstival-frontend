@@ -29,7 +29,24 @@ function Header() {
   return (
     <div className={styles.headerLayout}>
       <Logo onClick={() => navigate('/')} />
-      <Badge badgeContent={cartItems.length} color="primary" onClick={handleCartClick} style={{ cursor: 'pointer' }}>
+      <Badge
+        sx={{
+          '& .MuiBadge-badge': {
+            backgroundColor: '#FF866B', // 원하는 배경색
+            color: 'white', // 텍스트 색상
+            fontFamily: 'Pretendard', // 원하는 폰트 패밀리
+            fontSize: '8px',
+            fontWeight: '700',
+            minWidth: '12px',
+            height: '12px',
+            padding: '4px;',
+          },
+        }}
+        badgeContent={cartItems.length}
+        color="primary"
+        onClick={handleCartClick}
+        style={{ cursor: 'pointer' }}
+      >
         <ShoppingCartIcon />
       </Badge>
     </div>

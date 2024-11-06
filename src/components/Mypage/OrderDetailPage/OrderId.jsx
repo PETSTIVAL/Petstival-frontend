@@ -1,14 +1,8 @@
-import * as React from 'react';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 
 export default function OrderId(props) {
-  // 위치가 중요함...
-  if (!props) {
-    return <p>Loading product data...</p>;
-  }
-
   return (
     <>
       <h3>주문 정보</h3>

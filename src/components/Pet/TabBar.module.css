@@ -1,16 +1,18 @@
 .TabBar {
+  position: sticky;
+  z-index: 20;
   display: flex;
   align-items: center;
   justify-content: center;
   border-bottom: 1px solid var(--gray-gray-10, #f5f5f5);
   cursor: pointer;
-  margin-bottom: 16px;
-  margin-top: 23px;
+  background-color: #fff;
+  box-shadow: 0px 2px 4px 0px rgba(24, 119, 242, 0.08);
 }
 
 .tab {
   display: flex;
-  width: 75px;
+  width: calc(100% / 2);
   padding: 12px 10px;
   flex-direction: column;
   justify-content: center;

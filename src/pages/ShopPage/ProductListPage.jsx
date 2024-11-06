@@ -9,8 +9,16 @@ import Navbar from '../../components/Navbar/Navbar';
 import { useProductStore } from '../../stores/useProductStore';
 import { LinearProgress } from '@mui/material';
 
+const Container = styled.div`
+  position: relative;
+  width: 100%;
+  height: 100%;
+`;
+
 const Wrapper = styled.section`
-  padding: 24px;
+  height: calc(100% - 240px); // 전체 높이에서 Header, ShopTabBar, Navbar 높이 제외
+  overflow-y: auto;
+  padding: 24px 20px;
 `;
 
 const ProductListPage = () => {
@@ -61,14 +69,14 @@ const ProductListPage = () => {
   }
 
   return (
-    <>
+    <Container>
       <Header />
-      <Wrapper>
-        {loading ? (
-          <LinearProgress />
-        ) : (
-          <>
-            <ShopTabBar activeTab={activeTab} onTabChange={handleTabChange} /> {/* activeTab을 ShopTabBar로 전달 */}
+      {loading ? (
+        <LinearProgress />
+      ) : (
+        <>
+          <ShopTabBar activeTab={activeTab} onTabChange={handleTabChange} /> {/* activeTab을 ShopTabBar로 전달 */}
+          <Wrapper>
             <div className={styles.itemWrapper}>
               {filteredProducts.map((product) => (
                 <ProductItem
@@ -80,11 +88,11 @@ const ProductListPage = () => {
                 />
               ))}
             </div>
-          </>
-        )}
-      </Wrapper>
+          </Wrapper>
+        </>
+      )}
       <Navbar selectedMenu="Shop" />
-    </>
+    </Container>
   );
 };
 

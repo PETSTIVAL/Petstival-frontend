@@ -47,7 +47,14 @@
 }
 
 .noDataContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 100%;
   height: 300px;
   background-color: var(--gray-20);
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--gray-60);
 }

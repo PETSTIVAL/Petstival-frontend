@@ -1,9 +1,7 @@
 .priceDisplay {
   color: var(--gray-gray-100, #222022);
   text-align: right;
-  font-family: Pretendard;
-  font-size: 14px;
+  font-size: 16px;
   font-style: normal;
   font-weight: 700;
-  line-height: 22px; /* 157.143% */
 }

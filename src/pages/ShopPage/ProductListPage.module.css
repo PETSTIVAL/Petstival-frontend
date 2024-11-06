@@ -1,9 +1,11 @@
 .itemWrapper {
   display: flex;
+  gap: 12px;
   flex-wrap: wrap;
   /* justify-content: center; */
 }
 
 .itemWrapper > * {
-  width: calc(50%); /* 2열로 만들기 위해 50% 너비를 설정 */
+  width: calc((100% - 12px) / 2); /* 2열로 만들기 위해 50% 너비를 설정 */
+  aspect-ratio: 1 / 1; /* 정사각형 비율로 설정 */
 }

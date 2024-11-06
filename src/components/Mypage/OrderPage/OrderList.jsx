@@ -26,10 +26,7 @@ export default function OrderList({ item }) {
   const handleReorder = async () => {
     try {
       // order_detail 테이블에서 주문 항목 정보 가져오기
-      const { data: orderDetails, error: orderDetailError } = await supabase
-        .from('order_detail')
-        .select()
-        .eq('order_id', item.order_id);
+      const { data: orderDetails, error: orderDetailError } = await supabase.from('order_detail').select().eq('order_id', item.order_id);
       if (orderDetailError) throw orderDetailError;
 
       // order 테이블에서 배송지 및 주문 정보 가져오기
@@ -92,17 +89,23 @@ export default function OrderList({ item }) {
       >
         <Grid item>
           <Typography variant="body2" component="div">
-            {new Date(item.order.created_at)
-              .toLocaleString('ko-KR', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false,
-              })
-              .replace(/\.$/, '')}
-            &nbsp; 결제 완료
+            {item.order.order_status === 'cancel' ? (
+              <Typography></Typography>
+            ) : (
+              <>
+                {new Date(item.order.created_at)
+                  .toLocaleString('ko-KR', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false,
+                  })
+                  .replace(/\.$/, '')}
+                &nbsp; 결제 완료
+              </>
+            )}
           </Typography>
         </Grid>
 
@@ -110,10 +113,7 @@ export default function OrderList({ item }) {
           {item.order.order_status === 'cancel' ? (
             <Typography sx={{ color: '#EA4646' }}>주문 취소</Typography>
           ) : (
-            <Typography
-              onClick={() => navigate(`/mypage/order/detail?order_id=${item.order_id}`)}
-              sx={{ cursor: 'pointer' }}
-            >
+            <Typography onClick={() => navigate(`/mypage/order/detail?order_id=${item.order_id}`)} sx={{ cursor: 'pointer' }}>
               주문 상세 &gt;
             </Typography>
           )}
@@ -123,23 +123,14 @@ export default function OrderList({ item }) {
       <Grid container spacing={2}>
         <Grid item>
           <ButtonBase sx={{ width: 100, height: 100 }}>
-            <img
-              src={item.order.img_url_1}
-              alt={item.order.order_title}
-              style={{ width: 100, height: 100 }}
-            />
+            <img src={item.order.img_url_1} alt={item.order.order_title} style={{ width: 100, height: 100 }} />
           </ButtonBase>
         </Grid>
 
         <Grid item xs={12} sm container sx={{ marginTop: '10px' }}>
           <Grid item xs container direction="column" spacing={2}>
             <Grid item xs>
-              <Typography
-                gutterBottom
-                variant="subtitle1"
-                component="div"
-                sx={{ cursor: 'pointer', fontWeight: 'bold' }}
-              >
+              <Typography gutterBottom variant="subtitle1" component="div" sx={{ cursor: 'pointer', fontWeight: 'bold' }}>
                 {item.order.order_title}
               </Typography>
 
@@ -148,13 +139,9 @@ export default function OrderList({ item }) {
               </Typography>
 
               {/* 주문 취소된 경우에만 재주문 버튼 표시 */}
-              {item.order.order_status === 'cancel' && (
-                <ReorderButton onClick={handleReorder}>재주문하기</ReorderButton>
-              )}
+              {item.order.order_status === 'cancel' && <ReorderButton onClick={handleReorder}>재주문하기</ReorderButton>}
 
-              <Typography sx={{ cursor: 'pointer', fontWeight: 'bold' }}>
-                {item.order.total_price.toLocaleString()}원
-              </Typography>
+              <Typography sx={{ cursor: 'pointer', fontWeight: 'bold' }}>{item.order.total_price.toLocaleString()}원</Typography>
             </Grid>
           </Grid>
         </Grid>

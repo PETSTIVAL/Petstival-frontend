@@ -17,6 +17,9 @@ import EditPetProfilePage from '../pages/PetPage/EditPetProfilePage/EditPetProfi
 import ProductListPage from '../pages/ShopPage/ProductListPage';
 import ProductDetailPage from '../pages/ShopPage/ProductDetailPage';
 import PetstivalShopPage from '../pages/PetstivalShopPage/PetstivalShopPage';
+import QRScannerPage from '../pages/QRScanner/QRScannerPage';
+import QRCodeAuthPage from '../pages/QRCodeAuth/QRCodeAuthPage';
+import QRCodeAuthOkPage from '../pages/QRCodeAuth/QRCodeAuthOkPage';
 import { element } from 'prop-types';
 import CartPage from '../pages/ShopPage/CartPage';
 
@@ -101,6 +104,18 @@ export const Screens = {
   cart: {
     path: '/cart',
     element: <CartPage />,
+  },
+  QRScanner: {
+    path: '/qrscanner',
+    element: <QRScannerPage />,
+  },
+  QRCodeAuth: {
+    path: '/qrcodeauth',
+    element: <QRCodeAuthPage />,
+  },
+  QRCodeAuthOk: {
+    path: '/qrcodeauthok',
+    element: <QRCodeAuthOkPage />,
   },
   // 페이지를 추가 시 아래에 새로운 페이지 객체 작성
   // Survey: {

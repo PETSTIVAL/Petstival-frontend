@@ -39,7 +39,10 @@ function SuccessPage() {
         // 결제 성공 비즈니스 로직을 구현
         setIsConfirmed(true);
         // payment table에 payment_state 정보를 success로 업데이트
-        const { data, error } = await supabase.from('payment').update({ payment_state: 'success' }).eq('orderId', orderId);
+        const { data, error } = await supabase.from('payment').update({ 
+          payment_state: 'success', 
+          payment_key: paymentKey
+        }).eq('orderId', orderId);
 
         const cartIdList = cartItems.map((item) => {
           return item.productId;

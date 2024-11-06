@@ -9,6 +9,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import supabase from '../../../services/supabaseClient';
 import { Button } from '@mui/material';
 import YesNoModal from '../../../components/Common/Modal/DefaultModal';
+import { LinearProgress } from '@mui/material';
 
 const Wrapper = styled.section`
   margin-left: 24px;
@@ -26,7 +27,7 @@ function OrderDetailPage() {
     // payment 테이블에서 payment_state가 success이고 order_id가 일치하는 데이터만 가져옴
     const { data, error } = await supabase
       .from('payment')
-      .select('order_id, order(*)')
+      .select('order_id, payment_key, order(*)')
       .eq('payment_state', 'success')
       .eq('order_id', order_id)
       .single();
@@ -45,12 +46,12 @@ function OrderDetailPage() {
       .from('order_detail')
       .select(
         `
-    *,
-    product (
-      product_name,
-      image_url_1
-    )
-  `
+        *,
+        product (
+          product_name,
+          image_url_1
+        )
+      `
       )
       .eq('order_id', order_id);
 
@@ -67,7 +68,7 @@ function OrderDetailPage() {
   async function cancelOrder() {
     try {
       const { error } = await supabase.from('order').update({ order_status: 'cancel' }).eq('order_id', order_id);
-
+      cancelPayment();
       if (error) {
         console.error('Error deleting order:', error);
         return;
@@ -77,9 +78,23 @@ function OrderDetailPage() {
     }
   }
 
+  async function cancelPayment() {
+    const response = await fetch('https://hfnchwvpqruwmlehusbs.supabase.co/functions/v1/payment-cancel', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        paymentKey: product.payment_key,
+      }),
+    });
+    const data = await response.json();
+    console.log(data);
+    window.location.href = '/mypage/order';
+  }
+
   async function handleCancel() {
     setIsConfirmModalOpen(true);
-    cancelOrder();
   }
 
   useEffect(() => {
@@ -88,7 +103,7 @@ function OrderDetailPage() {
   }, []);
 
   if (!product) {
-    return <p>Loading product data...</p>;
+    return <LinearProgress />;
   }
 
   return (
@@ -96,13 +111,12 @@ function OrderDetailPage() {
       <DetailBar title="주문 상세" />
       <Wrapper>
         <OrderId order_id={product.order.order_title} created_at={product.order.created_at} />
-        <h3>주문 내역</h3>
         <div>
           {orderItem.map((item) => {
             return (
               <ProductInfo
-                key={item.product_id}  // Unique key added for each ProductInfo component
-                created_at={item.created_at}
+                key={item.product_id}
+                created_at={product.order.created_at}
                 img_url_1={item.product.image_url_1}
                 product_name={item.product.product_name}
                 total_count={item.count}
@@ -130,9 +144,7 @@ function OrderDetailPage() {
           content={`정말 주문 취소 하시겠어요?`}
           isOpen={isConfirmModalOpen}
           setIsOpen={() => setIsConfirmModalOpen(!isConfirmModalOpen)}
-          onYesClick={() => {
-            window.location.href = '/mypage/order';
-          }}
+          onYesClick={() => cancelOrder()}
         />
       </Wrapper>
       <Navbar selectedMenu="MyPage" />

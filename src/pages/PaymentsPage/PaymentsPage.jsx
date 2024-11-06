@@ -8,9 +8,16 @@ import { useLocation } from 'react-router-dom';
 import useDeliveryStore from '../../stores/useDeliveryStore';
 import useTotalStore from '../../stores/useTotalStore';
 
+const Container = styled.div`
+  position: relative;
+  width: 100%;
+  height: 100%;
+`;
+
 const Wrapper = styled.section`
-  margin-left: 24px;
-  margin-right: 24px;
+  height: calc(100% - 160px); // 전체 높이에서 Header, ShopTabBar, Navbar 높이 제외
+  overflow-y: auto;
+  /* padding: 24px 20px; */
 `;
 
 function PaymentsPage() {
@@ -53,14 +60,14 @@ function PaymentsPage() {
   ]);
 
   return (
-    <>
+    <Container>
       <DetailBar title="주문하기" />
       <Wrapper>
         <DeliveryInfo />
         <OrderInfo />
       </Wrapper>
       <Navbar selectedMenu="Shop" />
-    </>
+    </Container>
   );
 }
 

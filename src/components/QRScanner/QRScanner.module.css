@@ -1,0 +1,21 @@
+
+.qrScannerContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 100vh; /* 화면 전체를 사용 */
+    background-color: #f8f8f8; /* 배경색 */
+}
+
+.qrReader {
+    border: 2px dashed #4CAF50; /* QR 코드 스캔 박스 스타일 */
+    background-color: rgba(255, 255, 255, 0.9); /* 반투명 배경 */
+    width: 250px; /* 박스 넓이 */
+    height: 250px; /* 박스 높이 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+

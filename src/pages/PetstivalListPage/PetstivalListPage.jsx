@@ -14,6 +14,7 @@ import noImage from '../../assets/images/no-image.jpg';
 import { LinearProgress } from '@mui/material';
 import formatDate from '../../utils/formatDate';
 import ButtonSmall from '../../components/Common/Button/ButtonSmall';
+import YesNoModal from '../../components/Common/Modal/YesNoModal';
 
 const Container = styled.div`
   width: 100%;
@@ -47,6 +48,12 @@ export default function PetstivalListPage() {
   const [error, setError] = useState(null);
   const [userId, setUserId] = useState(null);
   const navigate = useNavigate();
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false); // YesNoModal 열림 상태
+  const [showResultModal, setShowResultModal] = useState(false); // DefaultModal 열림 상태
+  const [modalMessage, setModalMessage] = useState(''); // DefaultModal에 표시할 메시지
+  const [modalTitle, setModalTitle] = useState(''); // DefaultModal의 제목
+  const [selectedFestivalId, setSelectedFestivalId] = useState(null); // 참여 또는 취소할 페스티벌 ID
+  const [isParticipating, setIsParticipating] = useState(false); // 현재 참여 상태
 
   useEffect(() => {
     // 로그인된 사용자 ID 가져오기
@@ -56,10 +63,7 @@ export default function PetstivalListPage() {
       } = await supabase.auth.getUser();
       if (user) {
         setUserId(user.id); // 실제 user_id 설정
-      } else {
-        console.error('User is not logged in');
-        navigate('/login'); // 로그인 페이지로 리디렉션
-      }
+      } 
     };
     fetchUser();
   }, []);
@@ -98,15 +102,6 @@ export default function PetstivalListPage() {
   };
 
   useEffect(() => {
-    const fetchUserId = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (user) {
-        setUserId(user.id);
-      }
-    };
-    fetchUserId();
     getData();
   }, [userId]);
 
@@ -126,24 +121,33 @@ export default function PetstivalListPage() {
   };
 
   // 페스티벌 참여 및 취소 함수
-  const handleParticipation = async (festivalId) => {
+  const handleParticipation = async (festivalId, currentStatus) => {
     if (!userId) {
-      navigate('/login'); // 로그인되지 않은 경우에만 로그인 페이지로 리디렉션
+      navigate('/login');
       return;
     }
-
+  
+    setSelectedFestivalId(festivalId); // 선택한 페스티벌 ID 저장
+    setIsParticipating(currentStatus.isParticipating); // 현재 참여 상태 저장
+    setModalTitle(currentStatus.isParticipating ? '신청을 취소하시겠습니까?' : '정말 신청하시겠습니까?');
+    setModalMessage(currentStatus.isParticipating ? '참여를 취소하시겠습니까?' : '참여 신청을 하시겠습니까?');
+    setShowConfirmationModal(true); // 확인 모달 열기
+  };
+  
+  const confirmParticipationChange = async () => {
+    const festivalId = selectedFestivalId;
     const currentStatus = participationStatus[festivalId] || { isParticipating: false, verified: false };
-
+  
     try {
       if (currentStatus.isParticipating) {
         // 참여 취소
         const { error } = await supabase.from('user_festival').delete().eq('user_id', userId).eq('fetstivals_id', festivalId);
-
         if (error) throw error;
         setParticipationStatus((prev) => ({
           ...prev,
           [festivalId]: { isParticipating: false, verified: false },
         }));
+        setModalMessage('신청이 취소되었습니다. 페스티벌 페이지로 이동하여 확인해보시겠어요?');
       } else {
         // 참여 신청
         const { error } = await supabase.from('user_festival').insert({
@@ -152,17 +156,29 @@ export default function PetstivalListPage() {
           verified: false,
           verified_at: new Date().toISOString(),
         });
-
         if (error) throw error;
         setParticipationStatus((prev) => ({
           ...prev,
           [festivalId]: { isParticipating: true, verified: false },
-          [festivalId]: { isParticipating: true, verified: false },
         }));
+        setModalMessage('참여 신청이 완료되었습니다. 페스티벌 페이지로 이동하여 확인해보시겠어요?');
       }
+      setShowResultModal(true); // YesNoModal 열기
     } catch (error) {
-      console.error('참여 신청 중 오류 발생:', error);
+      console.error('참여 상태 변경 중 오류 발생:', error);
+    } finally {
+      setShowConfirmationModal(false); // 기존 확인 모달 닫기
     }
+  };
+  
+  // 모달에서 예를 누르면 /pet 페이지로 이동하고, 계속 둘러볼게요를 선택하면 모달 닫기
+  const handleResultModalConfirm = () => {
+    localStorage.setItem('activeTab', '펫스티벌'); // 기본 탭을 '펫스티벌'로 설정
+    navigate('/pet');
+  };
+  
+  const handleResultModalClose = () => {
+    setShowResultModal(false);
   };
 
   return (
@@ -233,7 +249,12 @@ export default function PetstivalListPage() {
                     />
                   </ImageListItem>
                   {(label !== '진행완료' || participation.verified) && (
-                    <ButtonSmall children={buttonLabel} onClick={() => handleParticipation(item.id)} sub="primary" disabled={participation.verified} />
+                    <ButtonSmall
+                    children={buttonLabel}
+                    onClick={() => handleParticipation(item.id, participation)}
+                    sub="primary"
+                    disabled={participation.verified}
+                  />
                   )}
                 </Paper>
               );
@@ -242,6 +263,22 @@ export default function PetstivalListPage() {
         )}
       </Wrapper>
       <Navbar selectedMenu="Home" />
+      <YesNoModal
+        title={modalTitle}
+        content={modalMessage}
+        isOpen={showConfirmationModal}
+        setIsOpen={setShowConfirmationModal}
+        onYesClick={confirmParticipationChange}
+      />
+
+      <YesNoModal
+        title="알림"
+        content={modalMessage}
+        isOpen={showResultModal}
+        setIsOpen={setShowResultModal}
+        onYesClick={handleResultModalConfirm} // "예"를 누르면 /pet로 이동
+        onNoClick={handleResultModalClose} // "계속 둘러볼게요"를 누르면 모달 닫기
+      />
     </Container>
   );
 }

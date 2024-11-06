@@ -4,16 +4,10 @@
   gap: 8px;
 }
 
-.iconImage {
-  width: 20px;
-  height: 20px;
-}
-
 .minusButton,
 .plusButton {
   display: flex;
-  width: 24px;
-  height: 24px;
+  padding: 4px;
   justify-content: center;
   align-items: center;
   border-radius: 50%;

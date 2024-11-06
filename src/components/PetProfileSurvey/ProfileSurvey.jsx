@@ -14,6 +14,7 @@ function ProfileSurvey({ step, petProfileData, setPetProfileData, validateStep, 
   const [focusIndex, setFocusIndex] = useState(-1);
   const listRef = useRef(null);
   const focusRef = useRef(null);
+  const [isTyping, setIsTyping] = useState(false); // 사용자가 입력 중인지 추적
 
   useEffect(() => {
     const isStepValid = validateStep();
@@ -21,20 +22,19 @@ function ProfileSurvey({ step, petProfileData, setPetProfileData, validateStep, 
   }, [step, petProfileData, setIsNextButtonEnabled]);
 
   const fetchBreeds = async (query) => {
-    // console.log('Fetching breeds for query:', query);
+    // Supabase에서 견종을 검색하여 자동완성 추천 목록으로 설정
     const { data, error } = await supabase.from('breeds').select('name').ilike('name', `%${query}%`);
 
     if (error) {
-      console.error('Error fetching breeds:', error);
+      console.error('견종을 가져오는 중 오류 발생:', error);
     } else {
-      // console.log('Fetched breeds:', data);
       setSuggestions(data.map((breed) => breed.name));
     }
   };
 
   // 디바운싱을 사용해 Supabase에서 견종 목록을 가져오는 useEffect
   useEffect(() => {
-    if (inputValue.trim() === '') {
+    if (!isTyping || inputValue.trim() === '') {
       setSuggestions([]);
       return;
     }
@@ -44,7 +44,8 @@ function ProfileSurvey({ step, petProfileData, setPetProfileData, validateStep, 
     }, 300);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [inputValue]);
+  }, [inputValue, isTyping]);
+
 
   // 키보드 이벤트 처리
   const handleKeyUp = (e) => {
@@ -58,24 +59,17 @@ function ProfileSurvey({ step, petProfileData, setPetProfileData, validateStep, 
           setIsAutoSearch(false);
           setFocusIndex(-1);
           setSuggestions([]);
+          setIsTyping(false); // 입력 중지
         }
       },
       ArrowDown: () => {
         if (suggestions.length === 0) return;
-        if (focusIndex === suggestions.length - 1) {
-          setFocusIndex(0);
-        } else {
-          setFocusIndex((prevIndex) => prevIndex + 1);
-        }
+        setFocusIndex((prevIndex) => (prevIndex === suggestions.length - 1 ? 0 : prevIndex + 1));
         setIsAutoSearch(true);
       },
       ArrowUp: () => {
-        if (focusIndex === -1) return;
-        if (focusIndex === 0) {
-          setFocusIndex(suggestions.length - 1);
-        } else {
-          setFocusIndex((prevIndex) => prevIndex - 1);
-        }
+        if (suggestions.length === 0) return;
+        setFocusIndex((prevIndex) => (prevIndex <= 0 ? suggestions.length - 1 : prevIndex - 1));
       },
       Escape: () => {
         setSuggestions([]);
@@ -91,6 +85,7 @@ function ProfileSurvey({ step, petProfileData, setPetProfileData, validateStep, 
   const handleInputChange = (e) => {
     const newValue = e.target.value;
     setInputValue(newValue);
+    setIsTyping(true); // 입력 시작
     setPetProfileData((prev) => ({
       ...prev,
       breed: newValue,
@@ -194,6 +189,7 @@ function ProfileSurvey({ step, petProfileData, setPetProfileData, validateStep, 
                     setInputValue(breed);
                     setSuggestions([]);
                     setFocusIndex(-1);
+                    setIsTyping(false); // 입력 중지
                   }}
                   className={`${styles.suggestionItem} ${index === focusIndex ? styles.active : ''}`}
                 >

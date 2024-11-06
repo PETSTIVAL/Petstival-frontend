@@ -21,24 +21,26 @@ export default function Navbar(props) {
 
   return (
     <div className={styles.NavbarLayout}>
-      <div onClick={() => handleNavigation('/')} className={`${styles.NavBarBtn} ${props.selectedMenu === 'Home' ? `${styles.NavBarBtnSelected}` : ''}`}>
+      <div onClick={() => handleNavigation('/')} className={`${styles.NavBarBtn} ${props.selectedMenu === 'Home' ? `${styles.NavBarBtnSelected}` : ''}`} style={{ cursor: 'pointer' }}>
         <HomeIcon fill={props.selectedMenu === 'Home' ? `var(--primary-default)` : `var(--gray-40)`} />
         <div>홈</div>
       </div>
       <div
         onClick={() => handleNavigation('/products')}
         className={`${styles.NavBarBtn} ${props.selectedMenu === 'Shop' ? `${styles.NavBarBtnSelected}` : ''}`}
+        style={{ cursor: 'pointer' }}
       >
         <ShopIcon fill={props.selectedMenu === 'Shop' ? `var(--primary-default)` : `var(--gray-40)`} />
         <div>쇼핑</div>
       </div>
-      <div onClick={() => handleNavigation('/pet')} className={`${styles.NavBarBtn} ${props.selectedMenu === 'Pet' ? `${styles.NavBarBtnSelected}` : ''}`}>
+      <div onClick={() => handleNavigation('/pet')} className={`${styles.NavBarBtn} ${props.selectedMenu === 'Pet' ? `${styles.NavBarBtnSelected}` : ''}`} style={{ cursor: 'pointer' }}>
         <PetIcon fill={props.selectedMenu === 'Pet' ? `var(--primary-default)` : `var(--gray-40)`} />
         <div>반려견</div>
       </div>
       <div
         onClick={() => handleNavigation('/mypage')}
         className={`${styles.NavBarBtn} ${props.selectedMenu === 'MyPage' ? `${styles.NavBarBtnSelected}` : ''}`}
+        style={{ cursor: 'pointer' }}
       >
         <UserIcon fill={props.selectedMenu === 'MyPage' ? `var(--primary-default)` : `var(--gray-40)`} />
         <div>내 정보</div>

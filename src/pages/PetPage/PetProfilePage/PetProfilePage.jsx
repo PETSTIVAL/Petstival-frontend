@@ -38,7 +38,7 @@ function PetProfilePage() {
       <div className={`${styles.wrapper}`}>
         <div className={`${styles.headerWrapper}`}>
           <div className={`${styles.title}`}>{`${petData.pet_name}의 프로필`}</div>
-          <div className={`${styles.addProfileButton}`} onClick={handleClickEditProfile}>
+          <div className={`${styles.addProfileButton}`} onClick={handleClickEditProfile} style={{ cursor: 'pointer' }}>
             프로필 수정하기
           </div>
         </div>

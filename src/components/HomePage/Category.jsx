@@ -47,20 +47,20 @@ export default function Category() {
     <Wrapper>
       <h1 style={{ marginBottom: '8px' }}>카테고리</h1>
       <Container className="drop-shadow-default">
-        <CategoryButtonWrapper onClick={() => handleNavigate('사료/간식')}>
+        <CategoryButtonWrapper onClick={() => handleNavigate('사료/간식')} style={{ cursor: 'pointer' }}>
           <Food />
           <div>사료/간식</div>
         </CategoryButtonWrapper>
-        <CategoryButtonWrapper onClick={() => handleNavigate('위생/배변')}>
+        <CategoryButtonWrapper onClick={() => handleNavigate('위생/배변')} style={{ cursor: 'pointer' }}>
           <Clean />
           <div>위생/배변</div>
         </CategoryButtonWrapper>
 
-        <CategoryButtonWrapper onClick={() => handleNavigate('의류')}>
+        <CategoryButtonWrapper onClick={() => handleNavigate('의류')} style={{ cursor: 'pointer' }}>
           <Outdoor />
           <div>의류</div>
         </CategoryButtonWrapper>
-        <CategoryButtonWrapper onClick={() => handleNavigate('장난감')}>
+        <CategoryButtonWrapper onClick={() => handleNavigate('장난감')} style={{ cursor: 'pointer' }}>
           <Toy />
           <div>장난감</div>
         </CategoryButtonWrapper>

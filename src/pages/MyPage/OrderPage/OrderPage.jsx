@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import DetailBar from '../../../stories/DetailBar';
 import supabase from '../../../services/supabaseClient';
 import { useAuthStore } from '../../../stores/useAuthStore';
+import { LinearProgress } from '@mui/material';
 
 const Wrapper = styled.section`
   margin-left: 24px;
@@ -70,7 +71,7 @@ function OrderPage() {
   }, []);
 
   if (!successProduct) {
-    return <p>Loading product data...</p>;
+    return <LinearProgress />;
   }
 
   const groupItemsByDate = (items) => {

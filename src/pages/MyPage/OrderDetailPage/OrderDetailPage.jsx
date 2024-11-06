@@ -7,13 +7,51 @@ import DeliveryInfo from '../../../components/Mypage/OrderDetailPage/DeliveryInf
 import DetailBar from '../../../stories/DetailBar';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import supabase from '../../../services/supabaseClient';
-import { Button } from '@mui/material';
 import YesNoModal from '../../../components/Common/Modal/DefaultModal';
 import { LinearProgress } from '@mui/material';
 
+const Container = styled.div`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  height: 100svh;
+`;
+
 const Wrapper = styled.section`
-  margin-left: 24px;
-  margin-right: 24px;
+  overflow-y: auto;
+  height: 100%;
+  padding: 24px;
+  padding-bottom: 48px;
+`;
+
+const OrderProductWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 40px;
+`;
+
+const Button = styled.button`
+  width: 100%;
+  height: 56px;
+  bottom: 48px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  background-color: var(--primary-default);
+  color: var(--white);
+  cursor: pointer;
+
+  &:active {
+    background-color: var(--primary-darken);
+  }
+
+  &:disabled {
+    background-color: var(--gray-20);
+    color: var(--gray-60);
+  }
 `;
 
 function OrderDetailPage() {
@@ -107,11 +145,12 @@ function OrderDetailPage() {
   }
 
   return (
-    <>
+    <Container>
       <DetailBar title="주문 상세" />
       <Wrapper>
         <OrderId order_id={product.order.order_title} created_at={product.order.created_at} />
-        <div>
+        <h2 style={{ marginBottom: '8px' }}>주문 내역</h2>
+        <OrderProductWrapper>
           {orderItem.map((item) => {
             return (
               <ProductInfo
@@ -124,21 +163,13 @@ function OrderDetailPage() {
               />
             );
           })}
-        </div>
+        </OrderProductWrapper>
         <DeliveryInfo
           delivery_name={product.order.delivery_name}
           delivery_tel={product.order.delivery_tel}
           delivery_addr={product.order.delivery_addr}
           delivery_addr_detail={product.order.delivery_addr_detail}
         />
-        <Button
-          onClick={handleCancel}
-          variant="contained"
-          size="large"
-          sx={{ width: '100%', borderRadius: '8px', backgroundColor: 'var(--primary-default)', marginBottom: '15px' }}
-        >
-          주문 취소하기
-        </Button>
         <YesNoModal
           title={`주문 취소 확인`}
           content={`정말 주문 취소 하시겠어요?`}
@@ -146,9 +177,10 @@ function OrderDetailPage() {
           setIsOpen={() => setIsConfirmModalOpen(!isConfirmModalOpen)}
           onYesClick={() => cancelOrder()}
         />
+        <Button onClick={handleCancel}>주문 취소하기</Button>
       </Wrapper>
       <Navbar selectedMenu="MyPage" />
-    </>
+    </Container>
   );
 }
 

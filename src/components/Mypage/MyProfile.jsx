@@ -6,9 +6,9 @@ import ButtonBase from '@mui/material/ButtonBase';
 import { useAuthStore } from '../../stores/useAuthStore';
 import styled from 'styled-components';
 
-// [ ] 마이페이지 CSS 수정
+// [x] 마이페이지 CSS 수정
 // [ ] 주문 내역 페이지 CSS 수정
-// [ ] 주문 상세 페이지 CSS 수정
+// [x] 주문 상세 페이지 CSS 수정
 // [ ] 펫스티벌 추천 상품 페이지 CSS 수정
 // [ ] QR 인증 완료 페이지 CSS 수정
 

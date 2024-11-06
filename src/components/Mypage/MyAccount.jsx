@@ -64,8 +64,8 @@ export default function MyAccount() {
     <div>
       <h1 style={{ marginBottom: '12px' }}>계정 관리</h1>
       <Container className="drop-shadow-default">
-        <TextButton>로그아웃</TextButton>
-        <TextButton>회원탈퇴</TextButton>
+        <TextButton onClick={handleLogout}>로그아웃</TextButton>
+        <TextButton onClick={handleDelete}>회원탈퇴</TextButton>
       </Container>
       <YesNoModal
         title={`${modalType} 확인`}

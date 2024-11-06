@@ -62,8 +62,8 @@ export default function PetstivalListPage() {
       if (user) {
         setUserId(user.id); // 실제 user_id 설정
       }
+      fetchUser();
     };
-    fetchUser();
   }, []);
 
   // 전체 로딩 상태 확인
@@ -204,7 +204,6 @@ export default function PetstivalListPage() {
                 >
                   <ImageListItem onClick={() => navigate(`/petstival/${item.id}`)} style={{ cursor: 'pointer' }}>
                     <img
-                      // srcSet={`${imageSrc}?w=248&fit=crop&auto=format&dpr=2 2x`}
                       src={`${imageSrc}?w=248&fit=crop&auto=format`}
                       alt={item.title || 'No image available'}
                       style={{ borderRadius: '8px', border: '1px solid var(--gray-20)', marginBottom: '8px' }}

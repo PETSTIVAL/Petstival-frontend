@@ -36,7 +36,6 @@ const OrderProductWrapper = styled.div`
 const Button = styled.button`
   width: 100%;
   height: 56px;
-  bottom: 48px;
   border-radius: 12px;
   font-size: 16px;
   font-weight: 700;

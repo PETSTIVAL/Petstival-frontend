@@ -8,9 +8,21 @@ import supabase from '../../../services/supabaseClient';
 import { useAuthStore } from '../../../stores/useAuthStore';
 import { LinearProgress } from '@mui/material';
 
+const Container = styled.div`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  height: 100svh;
+`;
+
 const Wrapper = styled.section`
-  margin-left: 24px;
-  margin-right: 24px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 24px;
 `;
 
 const OrderCard = styled.div`
@@ -97,20 +109,23 @@ function OrderPage() {
   }
 
   return (
-    <>
+    <Container>
       <DetailBar title="주문 내역" />
       <Wrapper>
         {Object.keys(groupedItems).map((date) => (
-          <div key={date}>
-            <h3>{date}</h3>
-            {groupedItems[date].map((item, index) => (
-              <OrderList key={index} item={item} />
-            ))}
+          <div key={date} style={{ marginBottom: '32px' }}>
+            <h3 style={{ marginBottom: '8px' }}>{date}</h3>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {groupedItems[date].map((item, index) => (
+                <OrderList key={index} item={item} />
+              ))}
+            </div>
           </div>
         ))}
       </Wrapper>
       <Navbar selectedMenu="MyPage" />
-    </>
+    </Container>
   );
 }
 

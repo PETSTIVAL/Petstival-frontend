@@ -64,7 +64,7 @@ export default function PetstivalListPage() {
       } = await supabase.auth.getUser();
       if (user) {
         setUserId(user.id); // 실제 user_id 설정
-      } 
+      }
     };
     fetchUser();
   }, []);
@@ -136,18 +136,18 @@ export default function PetstivalListPage() {
       navigate('/login');
       return;
     }
-  
+
     setSelectedFestivalId(festivalId); // 선택한 페스티벌 ID 저장
     setIsParticipating(currentStatus.isParticipating); // 현재 참여 상태 저장
     setModalTitle(currentStatus.isParticipating ? '신청을 취소하시겠습니까?' : '정말 신청하시겠습니까?');
     setModalMessage(currentStatus.isParticipating ? '참여를 취소하시겠습니까?' : '참여 신청을 하시겠습니까?');
     setShowConfirmationModal(true); // 확인 모달 열기
   };
-  
+
   const confirmParticipationChange = async () => {
     const festivalId = selectedFestivalId;
     const currentStatus = participationStatus[festivalId] || { isParticipating: false, verified: false };
-  
+
     try {
       if (currentStatus.isParticipating) {
         // 참여 취소
@@ -209,7 +209,6 @@ export default function PetstivalListPage() {
                 >
                   <ImageListItem onClick={() => navigate(`/petstival/${item.id}`)} style={{ cursor: 'pointer' }}>
                     <img
-                      srcSet={`${imageSrc}?w=248&fit=crop&auto=format&dpr=2 2x`}
                       src={`${imageSrc}?w=248&fit=crop&auto=format`}
                       alt={item.title || 'No image available'}
                       style={{ borderRadius: '8px', border: '1px solid var(--gray-20)', marginBottom: '8px' }}
@@ -250,11 +249,11 @@ export default function PetstivalListPage() {
                   </ImageListItem>
                   {(label !== '진행완료' || participation.verified) && (
                     <ButtonSmall
-                    children={buttonLabel}
-                    onClick={() => handleParticipation(item.id, participation)}
-                    sub="primary"
-                    disabled={participation.verified}
-                  />
+                      children={buttonLabel}
+                      onClick={() => handleParticipation(item.id, participation)}
+                      sub="primary"
+                      disabled={participation.verified}
+                    />
                   )}
                 </Paper>
               );
@@ -271,12 +270,7 @@ export default function PetstivalListPage() {
         onYesClick={confirmParticipationChange}
       />
 
-      <DefaultModal
-        title="알림"
-        content={modalMessage}
-        isOpen={showResultModal}
-        setIsOpen={setShowResultModal}
-      />
+      <DefaultModal title="알림" content={modalMessage} isOpen={showResultModal} setIsOpen={setShowResultModal} />
     </Container>
   );
 }

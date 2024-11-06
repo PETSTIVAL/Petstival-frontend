@@ -135,7 +135,7 @@ const CartPage = () => {
               삭제하기
             </div>
           </div>
-          <div style={{ marginLeft: '10px', fontSize: '16px', fontWeight: '400', color: 'var(--gray-60)' }}>
+          <div style={{ fontSize: '16px' }}>
             {cartItems.length === 0 ? (
               <p>장바구니에 제품이 없습니다.</p>
             ) : (

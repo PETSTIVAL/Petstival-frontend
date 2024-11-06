@@ -1,16 +1,15 @@
 // 장바구니 페이지
 import React, { useEffect, useMemo, useState } from 'react';
-import useTotalStore from '../../stores/useTotalStore';
 import CartItem from '../../components/Cart/CartItem';
-import TotalAmount from '../../components/Cart/TotalAmount';
 import DetailBar from '../../stories/DetailBar';
 import styles from './CartPage.module.css';
 import ButtonLarge from '../../components/Common/Button/ButtonLarge';
 import { useCartStore } from '../../stores/useCartStore';
 import { useOrderItemStore } from '../../stores/useOrderItemStore';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Checkbox from '@mui/material/Checkbox';
+import { useProductStore } from '../../stores/useProductStore';
 
 const Container = styled.div`
   position: relative;
@@ -19,7 +18,7 @@ const Container = styled.div`
 `;
 
 const Wrapper = styled.section`
-  height: calc(100% - 240px); // 전체 높이에서 Header, ShopTabBar, Navbar 높이 제외
+  height: 100%;
   overflow-y: auto;
   padding: 24px 0;
 `;
@@ -32,6 +31,7 @@ const CartPage = () => {
   const updateCartItem = useCartStore((state) => state.updateCartItem);
   const removeCartItems = useCartStore((state) => state.removeCartItems);
   const addOrderItem = useOrderItemStore((state) => state.addOrderItem);
+  const fetchProducts = useProductStore((state) => state.fetchProducts);
   const [selectedItemId, setSelectedItemId] = useState([]);
   const [isInitialized, setIsInitialized] = useState(false); // 초기화를 한 번만 수행하도록 상태 추가
 
@@ -69,6 +69,10 @@ const CartPage = () => {
       setIsInitialized(true);
     }
   }, [cartItems, isInitialized]);
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
 
   const handleOrderButtonClick = () => {
     const orderItems = addOrderItem(cartItems);
@@ -110,7 +114,7 @@ const CartPage = () => {
               삭제하기
             </div>
           </div>
-          <div className={styles.itemList}>
+          <div style={{ marginLeft: '10px', fontSize: '16px', fontWeight: '400', color: 'var(--gray-60)' }}>
             {cartItems.length === 0 ? (
               <p>장바구니에 제품이 없습니다.</p>
             ) : (

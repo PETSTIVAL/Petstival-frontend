@@ -5,12 +5,26 @@ import MyProfile from '../../components/Mypage/MyProfile';
 import MyOrder from '../../components/Mypage/MyOrder';
 import MyAccount from '../../components/Mypage/MyAccount';
 import Navbar from '../../components/Navbar/Navbar';
-import {useAuthStore} from '../../stores/useAuthStore';
-import {useNavigate} from 'react-router-dom';
+import { useAuthStore } from '../../stores/useAuthStore';
+import { useNavigate } from 'react-router-dom';
 import styles from './MyPage.module.css';
+
+const Container = styled.div`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  height: 100svh;
+`;
+
 const Wrapper = styled.section`
-  margin-left: 24px;
-  margin-right: 24px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  gap: 48px;
+  padding: 24px;
 `;
 
 // TODO: 최근 구매 내역 1개만 불러오기
@@ -25,22 +39,15 @@ function MyPage() {
 
   if (!user) return null; // user가 없을 때는 null을 반환하여 컴포넌트 렌더링을 막음
   return (
-    <>
-    <div className={styles.container}>
+    <Container>
       <Header />
-      <div className={styles.wrapper}>
       <Wrapper>
         <MyProfile />
         <MyOrder />
         <MyAccount />
       </Wrapper>
-      </div>
-    
       <Navbar selectedMenu="MyPage" />
-      </div>
-      
-     
-    </>
+    </Container>
   );
 }
 

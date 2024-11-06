@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styles from './NumberPicker.module.css';
-import minusIcon from '../../assets/icons/minus.svg';
-import plusIcon from '../../assets/icons/plus.svg';
+import MinusIcon from '../../assets/icons/minus.svg?react';
+import PlusIcon from '../../assets/icons/plus-black.svg?react';
 
 const NumberPicker = ({ onCountChange }) => {
   const [count, setCount] = useState(1);
@@ -28,11 +28,11 @@ const NumberPicker = ({ onCountChange }) => {
   return (
     <div className={styles.numberPicker}>
       <button className={styles.minusButton} onClick={handleDecrement}>
-        <img src={minusIcon} alt="Minus" className={styles.iconImage} />
+        <MinusIcon />
       </button>
       <div className={styles.countDisplay}>{count}</div>
       <button className={styles.plusButton} onClick={handleIncrement}>
-        <img src={plusIcon} alt="Plus" className={styles.iconImage} />
+        <PlusIcon />
       </button>
     </div>
   );

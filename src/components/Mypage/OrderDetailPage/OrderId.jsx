@@ -1,48 +1,41 @@
-import * as React from 'react';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
+import styled from 'styled-components';
+
+const Container = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  width: 100%;
+  padding: 24px 32px;
+  gap: 2px;
+  background-color: #fff;
+  border-radius: 8px;
+  margin-bottom: 40px;
+`;
 
 export default function OrderId(props) {
-  // 위치가 중요함...
-  if (!props) {
-    return <p>Loading product data...</p>;
-  }
-
   return (
-    <>
-      <h3>주문 정보</h3>
-      <Paper
-        sx={(theme) => ({
-          p: 2,
-          margin: 'auto',
-          marginBottom: '15px',
-          marginTop: '15px',
-          maxWidth: 600,
-          flexGrow: 1,
-          backgroundColor: '#fff',
-          boxShadow: '0px 0px 8px 0px rgba(51, 51, 51, 0.08)',
-        })}
-      >
-        <Typography gutterBottom variant="subtitle3" component="div" sx={{ fontWeight: 'bold', marginLeft: '10px', marginBottom: '20px' }}>
-          {props.order_id}
-        </Typography>
-        <Grid item container spacing={2} sx={{ color: 'text.secondary', marginLeft: '10px' }}>
-          <Typography variant="body2" component="div">
-            {new Date(props.created_at)
-              .toLocaleString('ko-KR', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false,
-              })
-              .replace(/\.$/, '')}
-            &nbsp; 결제 완료
-          </Typography>
-        </Grid>
-      </Paper>
-    </>
+    <div>
+      <h2 style={{ marginBottom: '8px' }}>주문 정보</h2>
+      <Container className="drop-shadow-default">
+        <div style={{ fontSize: '16px', fontWeight: '500' }}>{props.order_id}</div>
+        <div style={{ fontSize: '14px', fontWeight: '500', color: 'var(--gray-60)' }}>
+          {new Date(props.created_at)
+            .toLocaleString('ko-KR', {
+              year: 'numeric',
+              month: '2-digit',
+              day: '2-digit',
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: false,
+            })
+            .replace(/\.$/, '')}
+          &nbsp; 결제 완료
+        </div>
+      </Container>
+    </div>
   );
 }

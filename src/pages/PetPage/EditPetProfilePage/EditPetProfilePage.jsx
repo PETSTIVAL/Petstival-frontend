@@ -28,16 +28,16 @@ function EditPetProfilePage() {
     errorMsg,
   } = usePetProfileForm();
 
-  const [suggestions, setSuggestions] = useState([]); // 자동완성 견종 목록
-  const [inputValue, setInputValue] = useState(petData.breed || ""); // 사용자가 입력하는 텍스트
+  const [suggestions, setSuggestions] = useState([]);
+  const [inputValue, setInputValue] = useState(petData.breed || "");
   const [focusIndex, setFocusIndex] = useState(-1);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [isFailedModalOpen, setIsFailedModalOpen] = useState(false);
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [modalType, setModalType] = useState('');
+  const [isTyping, setIsTyping] = useState(false); // New state to track typing
 
-  // 초기 데이터 설정
   useEffect(() => {
     setPetProfileData({
       pet_name: petData.pet_name,
@@ -54,13 +54,11 @@ function EditPetProfilePage() {
     });
   }, []);
 
-  // 유효성 검사
   useEffect(() => {
     const isValid = validatePetProfile();
     setIsButtonDisabled(!isValid);
   }, [petProfileData]);
 
-  // 견종 자동완성 데이터베이스 검색
   const fetchBreeds = async (query) => {
     if (!query) return;
     const { data, error } = await supabase
@@ -72,8 +70,6 @@ function EditPetProfilePage() {
       console.error("Error fetching breeds:", error);
     } else {
       setSuggestions(data.map(breed => breed.name));
-
-      // 기존 선택된 견종에 대해 focusIndex 설정
       const matchedIndex = data.findIndex((breed) => breed.name === inputValue);
       if (matchedIndex !== -1) {
         setFocusIndex(matchedIndex);
@@ -81,9 +77,8 @@ function EditPetProfilePage() {
     }
   };
 
-  // 입력할 때 디바운싱을 통해 자동완성 목록 갱신
   useEffect(() => {
-    if (inputValue.trim() === "") {
+    if (!isTyping || inputValue.trim() === "") {
       setSuggestions([]);
       return;
     }
@@ -93,11 +88,12 @@ function EditPetProfilePage() {
     }, 300);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [inputValue]);
+  }, [inputValue, isTyping]);
 
   const handleInputChange = (e) => {
     const newValue = e.target.value;
     setInputValue(newValue);
+    setIsTyping(true); // Start typing
     setPetProfileData((prev) => ({
       ...prev,
       breed: newValue,
@@ -117,6 +113,7 @@ function EditPetProfilePage() {
       setInputValue(suggestions[focusIndex]);
       setSuggestions([]);
       setFocusIndex(-1);
+      setIsTyping(false); // Stop typing
     } else if (e.key === "Escape") {
       setSuggestions([]);
       setFocusIndex(-1);
@@ -240,38 +237,39 @@ function EditPetProfilePage() {
               </div>
               {/* 견종 */}
               <div className={styles.fieldContainer}>
-                <div className={styles.label}>견종</div>
-                <Input
-                  type="text"
-                  value={inputValue}
-                  placeholder="견종을 입력하세요"
-                  setData={handleInputChange}
-                  onKeyUp={handleKeyUp}
-                />
-                {suggestions.length > 0 && (
-                  <ul className={styles.suggestionsList}>
-                    {suggestions.map((breed, index) => (
-                      <li
-                        key={index}
-                        onClick={() => {
-                          setPetProfileData((prev) => ({
-                            ...prev,
-                            breed,
-                          }));
-                          setInputValue(breed);
-                          setSuggestions([]);
-                        }}
-                        className={`${styles.suggestionItem} ${
-                          index === focusIndex ? styles.active : ''
-                        }`}
-                      >
-                        {breed}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-                <div className={styles.errorMsg}>{errorMsg.breed}</div>
-              </div>
+      <div className={styles.label}>견종</div>
+      <Input
+        type="text"
+        value={inputValue}
+        placeholder="견종을 입력하세요"
+        setData={handleInputChange}
+        onKeyUp={handleKeyUp}
+      />
+      {suggestions.length > 0 && (
+        <ul className={styles.suggestionsList}>
+          {suggestions.map((breed, index) => (
+            <li
+              key={index}
+              onClick={() => {
+                setPetProfileData((prev) => ({
+                  ...prev,
+                  breed,
+                }));
+                setInputValue(breed);
+                setSuggestions([]);
+                setIsTyping(false); // Stop typing
+              }}
+              className={`${styles.suggestionItem} ${
+                index === focusIndex ? styles.active : ''
+              }`}
+            >
+              {breed}
+            </li>
+          ))}
+        </ul>
+      )}
+      <div className={styles.errorMsg}>{errorMsg.breed}</div>
+    </div>
               {/* 성별 */}
               <div className={styles.fieldContainer}>
                 <div className={styles.label}>성별</div>

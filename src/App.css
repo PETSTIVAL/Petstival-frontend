@@ -9,7 +9,7 @@
   height: 100svh;
 
   /* 오버플로우 설정 */
-  overflow-y: auto;
+  overflow-y: hidden;
   overflow-x: hidden;
 
   background-color: var(--background);

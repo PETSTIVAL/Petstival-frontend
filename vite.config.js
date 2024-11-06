@@ -9,6 +9,10 @@ export default defineConfig({
     // include: ['chunk-HQKIOHVU.js'], // vite 종속성 오류
   },
   server: {
+    https: {
+      key: './localhost-key.pem',   // 생성한 비밀키 파일 경로
+      cert: './localhost.pem',       // 생성한 인증서 파일 경로
+    },
     proxy: {
       '/api': {
         // target: 'http://127.0.0.1:54321/functions/v1', // edge function local 주소

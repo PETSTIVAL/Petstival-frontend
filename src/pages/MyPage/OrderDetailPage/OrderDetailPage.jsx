@@ -7,12 +7,50 @@ import DeliveryInfo from '../../../components/Mypage/OrderDetailPage/DeliveryInf
 import DetailBar from '../../../stories/DetailBar';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import supabase from '../../../services/supabaseClient';
-import { Button } from '@mui/material';
 import YesNoModal from '../../../components/Common/Modal/DefaultModal';
+import { LinearProgress } from '@mui/material';
+
+const Container = styled.div`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  height: 100svh;
+`;
 
 const Wrapper = styled.section`
-  margin-left: 24px;
-  margin-right: 24px;
+  overflow-y: auto;
+  height: 100%;
+  padding: 24px;
+  padding-bottom: 48px;
+`;
+
+const OrderProductWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 40px;
+`;
+
+const Button = styled.button`
+  width: 100%;
+  height: 56px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  background-color: var(--primary-default);
+  color: var(--white);
+  cursor: pointer;
+
+  &:active {
+    background-color: var(--primary-darken);
+  }
+
+  &:disabled {
+    background-color: var(--gray-20);
+    color: var(--gray-60);
+  }
 `;
 
 function OrderDetailPage() {
@@ -24,7 +62,12 @@ function OrderDetailPage() {
 
   const getProductData = async () => {
     // payment 테이블에서 payment_state가 success이고 order_id가 일치하는 데이터만 가져옴
-    const { data, error } = await supabase.from('payment').select('order_id, order(*)').eq('payment_state', 'success').eq('order_id', order_id).single(); // 일치하는 정보 1개만 가져옴
+    const { data, error } = await supabase
+      .from('payment')
+      .select('order_id, payment_key, order(*)')
+      .eq('payment_state', 'success')
+      .eq('order_id', order_id)
+      .single();
     if (error) {
       console.error('Error fetching data:', error);
       return;
@@ -40,12 +83,12 @@ function OrderDetailPage() {
       .from('order_detail')
       .select(
         `
-    *,
-    product (
-      product_name,
-      image_url_1
-    )
-  `
+        *,
+        product (
+          product_name,
+          image_url_1
+        )
+      `
       )
       .eq('order_id', order_id);
 
@@ -55,7 +98,6 @@ function OrderDetailPage() {
     }
 
     if (data) {
-      console.log(data);
       setOrderItem(data);
     }
   };
@@ -63,7 +105,7 @@ function OrderDetailPage() {
   async function cancelOrder() {
     try {
       const { error } = await supabase.from('order').update({ order_status: 'cancel' }).eq('order_id', order_id);
-
+      cancelPayment();
       if (error) {
         console.error('Error deleting order:', error);
         return;
@@ -73,9 +115,23 @@ function OrderDetailPage() {
     }
   }
 
+  async function cancelPayment() {
+    const response = await fetch('https://hfnchwvpqruwmlehusbs.supabase.co/functions/v1/payment-cancel', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        paymentKey: product.payment_key,
+      }),
+    });
+    const data = await response.json();
+    console.log(data);
+    window.location.href = '/mypage/order';
+  }
+
   async function handleCancel() {
     setIsConfirmModalOpen(true);
-    cancelOrder();
   }
 
   useEffect(() => {
@@ -84,20 +140,21 @@ function OrderDetailPage() {
   }, []);
 
   if (!product) {
-    return <p>Loading product data...</p>;
+    return <LinearProgress />;
   }
 
   return (
-    <>
+    <Container>
       <DetailBar title="주문 상세" />
       <Wrapper>
         <OrderId order_id={product.order.order_title} created_at={product.order.created_at} />
-        <h3>주문 내역</h3>
-        <div>
+        <h2 style={{ marginBottom: '8px' }}>주문 내역</h2>
+        <OrderProductWrapper>
           {orderItem.map((item) => {
             return (
               <ProductInfo
-                created_at={item.created_at}
+                key={item.product_id}
+                created_at={product.order.created_at}
                 img_url_1={item.product.image_url_1}
                 product_name={item.product.product_name}
                 total_count={item.count}
@@ -105,33 +162,24 @@ function OrderDetailPage() {
               />
             );
           })}
-        </div>
+        </OrderProductWrapper>
         <DeliveryInfo
           delivery_name={product.order.delivery_name}
           delivery_tel={product.order.delivery_tel}
           delivery_addr={product.order.delivery_addr}
           delivery_addr_detail={product.order.delivery_addr_detail}
         />
-        <Button
-          onClick={handleCancel}
-          variant="contained"
-          size="large"
-          sx={{ width: '100%', borderRadius: '8px', backgroundColor: 'var(--primary-default)', marginBottom: '15px' }}
-        >
-          주문 취소하기
-        </Button>
         <YesNoModal
           title={`주문 취소 확인`}
           content={`정말 주문 취소 하시겠어요?`}
           isOpen={isConfirmModalOpen}
           setIsOpen={() => setIsConfirmModalOpen(!isConfirmModalOpen)}
-          onYesClick={() => {
-            window.location.href = '/mypage/order';
-          }}
+          onYesClick={() => cancelOrder()}
         />
+        <Button onClick={handleCancel}>주문 취소하기</Button>
       </Wrapper>
       <Navbar selectedMenu="MyPage" />
-    </>
+    </Container>
   );
 }
 

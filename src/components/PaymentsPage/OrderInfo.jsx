@@ -9,8 +9,39 @@ import useDeliveryStore from '../../stores/useDeliveryStore';
 import { useProductStore } from '../../stores/useProductStore';
 import { useAuthStore } from '../../stores/useAuthStore';
 import { useOrderItemStore } from '../../stores/useOrderItemStore';
-import { Button } from '@mui/material';
 import supabase from '../../services/supabaseClient';
+import styled from 'styled-components';
+
+const Container = styled.div`
+  width: 100%;
+  padding: 32px;
+  background-color: #fff;
+  margin: 24px 0;
+`;
+
+const Button = styled.button`
+  width: calc(100% - 48px);
+  height: 64px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin: 24px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: ${({ $sub }) => ($sub === 'secondary' ? '500' : '700')};
+  background-color: ${({ $sub }) => ($sub === 'secondary' ? 'var(--primary-bright)' : 'var(--primary-default)')};
+  color: ${({ $sub }) => ($sub === 'secondary' ? 'var(--gray-100)' : 'var(--white)')};
+  border: ${({ $sub }) => ($sub === 'secondary' ? '1px solid var(--primary-light)' : '')};
+  &:active {
+    background-color: ${({ $sub }) => ($sub === 'secondary' ? 'var(--primary-light)' : 'var(--primary-darken)')};
+  }
+
+  &:disabled {
+    background-color: var(--gray-20);
+    color: var(--gray-60);
+  }
+`;
 
 export default function OrderInfo() {
   const navigate = useNavigate();
@@ -104,42 +135,19 @@ export default function OrderInfo() {
   }
 
   return (
-    <div>
-      <h3>주문 상품</h3>
-      <Paper
-        sx={{
-          p: 2,
-          margin: 'auto',
-          marginBottom: '15px',
-          marginTop: '5px',
-          maxWidth: 600,
-          flexGrow: 1,
-          borderRadius: '8px',
-          backgroundColor: '#fff',
-          boxShadow: '0px 0px 8px 0px rgba(51, 51, 51, 0.08)',
-        }}
-      >
+    <>
+      <Container className="drop-shadow-default">
+        <h2>주문 상품</h2>
         {isLoaded ? productList.map((product, index) => <OrderItem key={index} product={product} totalPrice={orderTotal} />) : <div>Loading</div>}
-        <Grid item container spacing={2} sx={{ width: '100%', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Grid item xs={3}>
-            <Typography variant="body2" component="div">
-              총 주문 금액
-            </Typography>
-          </Grid>
-          <Grid item xs={6} container justifyContent="flex-end" alignItems="center" sx={{ color: 'var(--secondary-orange-default)', fontWeight: 'bold' }}>
-            {orderTotal.toLocaleString()}원
-          </Grid>
-        </Grid>
-        <Button
-          onClick={handlePayment}
-          variant="contained"
-          disabled={!isFormComplete}
-          size="large"
-          sx={{ width: '100%', borderRadius: '8px', backgroundColor: 'var(--primary-default)' }}
-        >
-          {isFormComplete ? '결제하기' : '배송지를 입력해주세요'}
-        </Button>
-      </Paper>
-    </div>
+
+        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: '32px' }}>
+          <div style={{ fontSize: '16px', fontWeight: '500' }}>총 주문 금액</div>
+          <div style={{ fontSize: '20px', fontWeight: '700', color: 'var(--secondary-orange-default)' }}>{orderTotal.toLocaleString()}원</div>
+        </div>
+      </Container>
+      <Button onClick={handlePayment} disabled={!isFormComplete}>
+        {isFormComplete ? '결제하기' : '배송지를 입력해주세요'}
+      </Button>
+    </>
   );
 }

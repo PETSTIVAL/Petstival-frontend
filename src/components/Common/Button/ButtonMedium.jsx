@@ -9,7 +9,7 @@ const Button = styled.button`
   font-weight: ${({ $sub }) => ($sub === 'secondary' ? '500' : '700')};
   background-color: ${({ $sub }) => ($sub === 'secondary' ? 'var(--primary-light)' : 'var(--primary-default)')};
   color: ${({ $sub }) => ($sub === 'secondary' ? 'var(--gray-100)' : 'var(--white)')};
-
+  cursor: pointer;
   &:active {
     background-color: ${({ $sub }) => ($sub === 'secondary' ? 'var(--primary-medium)' : 'var(--primary-darken)')};
   }

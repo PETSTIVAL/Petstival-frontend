@@ -7,6 +7,25 @@ import { useAuthStore } from '../../stores/useAuthStore';
 import { useNavigate } from 'react-router-dom';
 import YesNoModal from '../../components/Common/Modal/YesNoModal';
 import DefaultModal from '../../components/Common/Modal/DefaultModal';
+import styled from 'styled-components';
+
+const Container = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  width: 100%;
+  padding: 24px 32px;
+  gap: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+`;
+
+const TextButton = styled.div`
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+`;
 
 export default function MyAccount() {
   const navigate = useNavigate();
@@ -43,50 +62,12 @@ export default function MyAccount() {
   };
 
   return (
-    <>
-      <h3>계정 관리</h3>
-      <Paper
-        sx={{
-          p: 2,
-          margin: 'auto',
-          marginBottom: '15px',
-          marginTop: '5px',
-          maxWidth: 600,
-          flexGrow: 1,
-          backgroundColor: '#fff',
-          borderRadius: '8px',
-          boxShadow: '0px 0px 8px 0px rgba(51, 51, 51, 0.08)',
-        }}
-      >
-        <Grid container>
-          <Grid item xs container direction="column" spacing={2}>
-            <Grid item xs>
-              <Typography
-                gutterBottom
-                variant="body2"
-                sx={{ margin: '15px', cursor: 'pointer' }}
-                onClick={() => {
-                  setIsConfirmModalOpen(true);
-                  setModalType('로그아웃');
-                }}
-              >
-                로그아웃
-              </Typography>
-              <Typography
-                gutterBottom
-                variant="body2"
-                sx={{ margin: '15px', cursor: 'pointer' }}
-                onClick={() => {
-                  setIsConfirmModalOpen(true);
-                  setModalType('회원 탈퇴');
-                }}
-              >
-                회원탈퇴
-              </Typography>
-            </Grid>
-          </Grid>
-        </Grid>
-      </Paper>
+    <div>
+      <h1 style={{ marginBottom: '12px' }}>계정 관리</h1>
+      <Container className="drop-shadow-default">
+        <TextButton onClick={handleLogout}>로그아웃</TextButton>
+        <TextButton onClick={handleDelete}>회원탈퇴</TextButton>
+      </Container>
       <YesNoModal
         title={`${modalType} 확인`}
         content={`정말 ${modalType}하시겠어요?`}
@@ -110,6 +91,6 @@ export default function MyAccount() {
         setIsOpen={() => setIsFailedModalOpen(!isFailedModalOpen)}
         onYesClick={() => setIsFailedModalOpen(!isFailedModalOpen)}
       />
-    </>
+    </div>
   );
 }

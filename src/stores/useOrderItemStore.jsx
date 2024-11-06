@@ -15,7 +15,6 @@ export const useOrderItemStore = create(
       // 주문할 상품 정보 추가 및 가격 총합 업데이트
       set({ orderItems: newOrderItems, orderTotal: newOrderItems.reduce((total, item) => total + item.totalPrice, 0) });
       // 업데이트된 상태를 즉시 반환
-      console.log(get().orderItems);
       return get().orderItems;
     },
 

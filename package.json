@@ -23,6 +23,7 @@
     "@tosspayments/tosspayments-sdk": "^2.3.2",
     "axios": "^1.7.7",
     "dayjs": "^1.11.13",
+    "html5-qrcode": "^2.3.8",
     "jwt-decode": "^4.0.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -55,7 +56,7 @@
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.2",
     "chromatic": "^11.12.6",
-    "eslint": "^9.12.0",
+    "eslint": "^9.14.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-react": "^7.37.0",
@@ -68,6 +69,7 @@
     "storybook": "^8.3.5",
     "supabase": "^1.204.3",
     "vite": "^5.4.8",
+    "vite-plugin-qrcode": "^0.2.3",
     "vite-plugin-svgr": "^4.2.0"
   }
 }

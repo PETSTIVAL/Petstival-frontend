@@ -40,15 +40,44 @@ body {
   background-color: #c6ddf6;
   box-sizing: border-box;
   -webkit-box-sizing: border-box;
+  color: var(--gray-100);
 }
 
 div,
 input,
-li {
+li,
+h1,
+h2,
+h3,
+h4 {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
   -webkit-box-sizing: border-box;
+}
+
+/* default heading font */
+h1 {
+  font-family: NanumSquareNeoExtraBold;
+  font-size: 18px;
+}
+
+h2 {
+  font-family: Pretendard;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+h3 {
+  font-family: Pretendard;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+h4 {
+  font-family: Pretendard;
+  font-size: 14px;
+  font-weight: 600;
 }
 
 input,

@@ -71,11 +71,11 @@ export default function MyOrder() {
           successProduct.length > 0 && (
             <Container className="drop-shadow-default">
               <RowWrapper>
-                {successProduct[successProduct.length - 1].order.order_status === 'cancel' ? (
+                {successProduct[0].order.order_status === 'cancel' ? (
                   <></>
                 ) : (
                   <div style={{ fontSize: '13px', fontWeight: '400', color: 'var(--gray-40)' }}>
-                    {new Date(successProduct[successProduct.length - 1].order.created_at)
+                    {new Date(successProduct[0].order.created_at)
                       .toLocaleString('ko-KR', {
                         year: 'numeric',
                         month: '2-digit',
@@ -89,31 +89,24 @@ export default function MyOrder() {
                   </div>
                 )}
                 <>
-                  {successProduct[successProduct.length - 1].order.order_status === 'cancel' ? (
+                  {successProduct[0].order.order_status === 'cancel' ? (
                     <div style={{ fontSize: '12px', fontWeight: '500', color: '#EA4646' }}>주문 취소</div>
                   ) : (
-                    <ShowMoreButton
-                      title="주문 상세"
-                      onClick={() => navigate(`/mypage/order/detail?order_id=${successProduct[successProduct.length - 1].order_id}`)}
-                    />
+                    <ShowMoreButton title="주문 상세" onClick={() => navigate(`/mypage/order/detail?order_id=${successProduct[0].order_id}`)} />
                   )}
                 </>
               </RowWrapper>
 
               <RowWrapper style={{ justifyContent: 'start', gap: '16px' }}>
                 <img
-                  src={successProduct[successProduct.length - 1].order.img_url_1}
-                  alt={successProduct[successProduct.length - 1].order.order_title}
+                  src={successProduct[0].order.img_url_1}
+                  alt={successProduct[0].order.order_title}
                   style={{ width: '80px', height: '80px', borderRadius: '8px' }}
                 />
                 <div>
-                  <div style={{ width: '100%', fontSize: '16px', fontWeight: '500' }}>{successProduct[successProduct.length - 1].order.order_title}</div>
-                  <div style={{ fontSize: '14px', fontWeight: '400', color: 'var(--gray-60)' }}>
-                    {successProduct[successProduct.length - 1].order.total_count}개
-                  </div>
-                  <div style={{ fontSize: '16px', fontWeight: '700', color: 'var(--gray-100)' }}>
-                    {successProduct[successProduct.length - 1].order.total_price.toLocaleString()}원
-                  </div>
+                  <div style={{ width: '100%', fontSize: '16px', fontWeight: '500' }}>{successProduct[0].order.order_title}</div>
+                  <div style={{ fontSize: '14px', fontWeight: '400', color: 'var(--gray-60)' }}>{successProduct[0].order.total_count}개</div>
+                  <div style={{ fontSize: '16px', fontWeight: '700', color: 'var(--gray-100)' }}>{successProduct[0].order.total_price.toLocaleString()}원</div>
                 </div>
               </RowWrapper>
             </Container>

@@ -24,6 +24,7 @@ const Container = styled.div`
 const TextButton = styled.div`
   font-size: 16px;
   font-weight: 500;
+  cursor: pointer;
 `;
 
 export default function MyAccount() {

@@ -1,11 +1,21 @@
+import React, { useEffect, useState } from 'react';
 import styles from './QRCodeAuthOkPage.module.css';
 import QRCodeOkLogo from '../../assets/icons/QR_ok_logo.svg?react';
 import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../../stores/useAuthStore';
 const QRCodeAuthOkPage = () =>{
+    const user = useAuthStore();
     const navigate = useNavigate();
     const handleGoBack = () => {
         navigate('/'); // This will navigate back to the previous page
       };
+      useEffect(() =>{
+        if(!user.user){
+            navigate('/login');
+        }
+
+      },[user])
+      if (!user) return null;
     return (
 
         <div className={styles.container}>

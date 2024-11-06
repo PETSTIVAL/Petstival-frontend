@@ -64,8 +64,8 @@ export default function PetstivalListPage() {
       if (user) {
         setUserId(user.id); // 실제 user_id 설정
       }
+      fetchUser();
     };
-    fetchUser();
   }, []);
 
   // 펫스티벌 데이터 가져오기 및 날짜별 정렬

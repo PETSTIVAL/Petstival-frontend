@@ -1,16 +1,16 @@
 .popupWrapper {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    top: 0;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    z-index: 1000;
-  }
-  
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 1000;
+}
+
 .mainPopup {
   background: white;
   width: 90%;
@@ -31,11 +31,22 @@
 
 .qr {
   width: 100%;
-  height: auto; 
+  height: auto;
+  cursor: pointer;
 }
 
 .close {
   display: flex;
   justify-content: space-between;
   width: 100%;
+}
+
+.textButton {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  color: var(--gray-60);
+  font-size: 14px;
+  cursor: pointer;
 }

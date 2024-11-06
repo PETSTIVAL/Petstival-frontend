@@ -1,16 +1,15 @@
 // 장바구니 페이지
 import React, { useEffect, useMemo, useState } from 'react';
-import useTotalStore from '../../stores/useTotalStore';
 import CartItem from '../../components/Cart/CartItem';
-import TotalAmount from '../../components/Cart/TotalAmount';
 import DetailBar from '../../stories/DetailBar';
 import styles from './CartPage.module.css';
 import ButtonLarge from '../../components/Common/Button/ButtonLarge';
 import { useCartStore } from '../../stores/useCartStore';
 import { useOrderItemStore } from '../../stores/useOrderItemStore';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Checkbox from '@mui/material/Checkbox';
+import { useProductStore } from '../../stores/useProductStore';
 
 const Container = styled.div`
   position: relative;
@@ -18,10 +17,31 @@ const Container = styled.div`
   height: 100%;
 `;
 
-const Wrapper = styled.section`
-  height: calc(100% - 240px); // 전체 높이에서 Header, ShopTabBar, Navbar 높이 제외
+const Wrapper = styled.div`
+  height: calc(100% - 48px);
   overflow-y: auto;
-  padding: 24px 0;
+  padding: 24px 0 40px 0;
+`;
+
+const Button = styled.button`
+  width: calc(100% - 64px);
+  height: 64px;
+  margin: 32px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  background-color: var(--primary-default);
+  color: var(--white);
+  cursor: pointer;
+
+  &:active {
+    background-color: var(--primary-darken);
+  }
+
+  &:disabled {
+    background-color: var(--gray-20);
+    color: var(--gray-60);
+  }
 `;
 
 const CartPage = () => {
@@ -32,6 +52,7 @@ const CartPage = () => {
   const updateCartItem = useCartStore((state) => state.updateCartItem);
   const removeCartItems = useCartStore((state) => state.removeCartItems);
   const addOrderItem = useOrderItemStore((state) => state.addOrderItem);
+  const fetchProducts = useProductStore((state) => state.fetchProducts);
   const [selectedItemId, setSelectedItemId] = useState([]);
   const [isInitialized, setIsInitialized] = useState(false); // 초기화를 한 번만 수행하도록 상태 추가
 
@@ -69,6 +90,10 @@ const CartPage = () => {
       setIsInitialized(true);
     }
   }, [cartItems, isInitialized]);
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
 
   const handleOrderButtonClick = () => {
     const orderItems = addOrderItem(cartItems);
@@ -110,7 +135,7 @@ const CartPage = () => {
               삭제하기
             </div>
           </div>
-          <div className={styles.itemList}>
+          <div style={{ fontSize: '16px' }}>
             {cartItems.length === 0 ? (
               <p>장바구니에 제품이 없습니다.</p>
             ) : (
@@ -130,8 +155,10 @@ const CartPage = () => {
             <div style={{ fontSize: '24px', fontWeight: '700', color: 'var(--secondary-orange-default)' }}>{selectedTotal.toLocaleString()}원</div>
           </div>
         </div>
+        <Button sub={'primary'} disabled={!cartItems || cartItems.length === 0} onClick={handleOrderButtonClick}>
+          주문하기
+        </Button>
       </Wrapper>
-      <ButtonLarge children={'구매하기'} sub={'primary'} disabled={!cartItems || cartItems.length === 0} onClick={handleOrderButtonClick} />
     </Container>
   );
 };

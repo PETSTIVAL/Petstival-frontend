@@ -7,22 +7,27 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import supabase from '../../services/supabaseClient';
 import { useAuthStore } from '../../stores/useAuthStore';
+import ShowMoreButton from '../Common/Button/ShowMoreButton';
+import { CircularProgress } from '@mui/material';
 
-const Info = styled.div`
+const Container = styled.div`
+  width: 100%;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  margin-top: 20px;
+  width: 100%;
+  padding: 16px 20px;
+  gap: 8px;
+  background-color: #fff;
+  border-radius: 8px;
 `;
 
-const Detail = styled.div`
-  color: var(--gray-gray-60, #838283);
-  font-family: Pretendard;
-  font-size: 17px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 18px;
-  cursor: pointer;
+const RowWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 `;
 
 export default function MyOrder() {
@@ -31,8 +36,12 @@ export default function MyOrder() {
   const user = useAuthStore((state) => state.user);
 
   const getSuccessData = async () => {
-    // payment 테이블에서 payment_state가 success인 데이터만 order 테이블의 정보를 가져옴
-    const { data, error } = await supabase.from('payment').select('order_id, order(*)').eq('payment_state', 'success');
+    // payment 테이블에서 payment_state가 success인 데이터만 order 테이블의 정보를 날짜순으로 가져옴
+    const { data, error } = await supabase
+      .from('payment')
+      .select('order_id, order(*)')
+      .eq('payment_state', 'success')
+      .order('created_at', { ascending: false });
 
     if (error) {
       console.error('Error fetching data:', error);
@@ -50,105 +59,64 @@ export default function MyOrder() {
     getSuccessData();
   }, []);
 
-  // 위치가 중요함...
-  if (!successProduct) {
-    return <p>Loading product data...</p>;
-  }
-
   return (
     <>
-      {successProduct && successProduct.length > 0 && (
-        <>
-          <Info>
-            <h3>최근 구매 내역</h3>
-            <Detail onClick={() => navigate('/mypage/order')}>주문 내역 보기 &gt;</Detail>
-          </Info>
-          <Paper
-            sx={(theme) => ({
-              p: 2,
-              margin: 'auto',
-              marginBottom: '15px',
-              marginTop: '5px',
-              maxWidth: 600,
-              flexGrow: 1,
-              borderRadius: '8px',
-              backgroundColor: '#fff',
-              boxShadow: '0px 0px 8px 0px rgba(51, 51, 51, 0.08)',
-            })}
-          >
-            <Grid
-              item
-              container
-              sx={{ color: 'text.secondary', marginLeft: '4px', marginBottom: '6px', justifyContent: 'space-between', alignItems: 'center' }}
-            >
-              <Grid item>
-                <Typography variant="body2" component="div">
-                  {successProduct[successProduct.length - 1].order.order_status === 'cancel' ? (
-                    <Typography></Typography>
-                  ) : (
-                    <>
-                      {new Date(successProduct[successProduct.length - 1].order.created_at)
-                        .toLocaleString('ko-KR', {
-                          year: 'numeric',
-                          month: '2-digit',
-                          day: '2-digit',
-                          hour: '2-digit',
-                          minute: '2-digit',
-                          hour12: false,
-                        })
-                        .replace(/\.$/, '')}
-                      &nbsp; 결제 완료
-                    </>
-                  )}
-                </Typography>
-              </Grid>
-
-              <Grid item>
-                {successProduct[successProduct.length - 1].order.order_status === 'cancel' ? (
-                  <Typography sx={{ color: '#EA4646' }}>주문 취소</Typography>
+      <div>
+        <RowWrapper style={{ marginBottom: '12px' }}>
+          <h1>최근 구매 내역</h1>
+          <ShowMoreButton title="주문 내역 보기" onClick={() => navigate('/mypage/order')} />
+        </RowWrapper>
+        {successProduct ? (
+          successProduct &&
+          successProduct.length > 0 && (
+            <Container className="drop-shadow-default">
+              <RowWrapper>
+                {successProduct[0].order.order_status === 'cancel' ? (
+                  <></>
                 ) : (
-                  <Typography
-                    onClick={() => navigate(`/mypage/order/detail?order_id=${successProduct[successProduct.length - 1].order_id}`)}
-                    sx={{ cursor: 'pointer' }}
-                  >
-                    주문 상세 &gt;
-                  </Typography>
+                  <div style={{ fontSize: '13px', fontWeight: '400', color: 'var(--gray-40)' }}>
+                    {new Date(successProduct[0].order.created_at)
+                      .toLocaleString('ko-KR', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: false,
+                      })
+                      .replace(/\.$/, '')}
+                    &nbsp; 결제 완료
+                  </div>
                 )}
-              </Grid>
-            </Grid>
+                <>
+                  {successProduct[0].order.order_status === 'cancel' ? (
+                    <div style={{ fontSize: '12px', fontWeight: '500', color: '#EA4646' }}>주문 취소</div>
+                  ) : (
+                    <ShowMoreButton title="주문 상세" onClick={() => navigate(`/mypage/order/detail?order_id=${successProduct[0].order_id}`)} />
+                  )}
+                </>
+              </RowWrapper>
 
-            <Grid container spacing={2}>
-              <Grid item>
-                <ButtonBase sx={{ width: 100, height: 100 }}>
-                  <img
-                    src={successProduct[successProduct.length - 1].order.img_url_1}
-                    alt={successProduct[successProduct.length - 1].order.order_title}
-                    style={{ width: 100, height: 100 }}
-                  />
-                </ButtonBase>
-              </Grid>
-
-              <Grid item xs={12} sm container sx={{ marginTop: '10px' }}>
-                <Grid item xs container direction="column" spacing={2}>
-                  <Grid item xs>
-                    <Typography gutterBottom variant="subtitle1" component="div" sx={{ cursor: 'pointer', fontWeight: 'bold' }}>
-                      {successProduct[successProduct.length - 1].order.order_title}
-                    </Typography>
-
-                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                      {successProduct[successProduct.length - 1].order.total_count}개
-                    </Typography>
-
-                    <Typography sx={{ cursor: 'pointer', fontWeight: 'bold' }}>
-                      {successProduct[successProduct.length - 1].order.total_price.toLocaleString()}원
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </Grid>
-            </Grid>
-          </Paper>
-        </>
-      )}
+              <RowWrapper style={{ justifyContent: 'start', gap: '16px' }}>
+                <img
+                  src={successProduct[0].order.img_url_1}
+                  alt={successProduct[0].order.order_title}
+                  style={{ width: '80px', height: '80px', borderRadius: '8px' }}
+                />
+                <div>
+                  <div style={{ width: '100%', fontSize: '16px', fontWeight: '500' }}>{successProduct[0].order.order_title}</div>
+                  <div style={{ fontSize: '14px', fontWeight: '400', color: 'var(--gray-60)' }}>{successProduct[0].order.total_count}개</div>
+                  <div style={{ fontSize: '16px', fontWeight: '700', color: 'var(--gray-100)' }}>{successProduct[0].order.total_price.toLocaleString()}원</div>
+                </div>
+              </RowWrapper>
+            </Container>
+          )
+        ) : (
+          <div style={{ width: '100%', height: '100px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <CircularProgress />
+          </div>
+        )}
+      </div>
     </>
   );
 }

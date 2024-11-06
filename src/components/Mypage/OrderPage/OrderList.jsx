@@ -7,16 +7,49 @@ import ButtonBase from '@mui/material/ButtonBase';
 import styled from 'styled-components';
 import supabase from '../../../services/supabaseClient';
 import { useOrderItemStore } from '../../../stores/useOrderItemStore';
+import ShowMoreButton from '../../Common/Button/ShowMoreButton';
+
+const Container = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 16px 20px;
+  gap: 8px;
+  background-color: #fff;
+  border-radius: 8px;
+`;
+
+const RowWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+`;
 
 const ReorderButton = styled.button`
   position: absolute;
   right: 40px;
-  padding: 8px 16px;
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
+  display: flex;
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: ${({ $sub }) => ($sub === 'secondary' ? '500' : '700')};
+  background-color: ${({ $sub }) => ($sub === 'secondary' ? 'var(--primary-light)' : 'var(--primary-default)')};
+  color: ${({ $sub }) => ($sub === 'secondary' ? 'var(--gray-100)' : 'var(--white)')};
+  word-break: keep-all;
   cursor: pointer;
+
+  &:active {
+    background-color: ${({ $sub }) => ($sub === 'secondary' ? 'var(--primary-medium)' : 'var(--primary-darken)')};
+  }
+
+  &:disabled {
+    background-color: var(--gray-20);
+    color: var(--gray-60);
+  }
 `;
 
 export default function OrderList({ item }) {
@@ -63,89 +96,40 @@ export default function OrderList({ item }) {
   };
 
   return (
-    <Paper
-      sx={{
-        p: 2,
-        margin: 'auto',
-        marginBottom: '15px',
-        marginTop: '5px',
-        maxWidth: 600,
-        flexGrow: 1,
-        borderRadius: '8px',
-        backgroundColor: '#fff',
-        boxShadow: '0px 0px 8px 0px rgba(51, 51, 51, 0.08)',
-      }}
-    >
-      <Grid
-        item
-        container
-        sx={{
-          color: 'text.secondary',
-          marginLeft: '4px',
-          marginBottom: '6px',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}
-      >
-        <Grid item>
-          <Typography variant="body2" component="div">
-            {item.order.order_status === 'cancel' ? (
-              <Typography></Typography>
-            ) : (
-              <>
-                {new Date(item.order.created_at)
-                  .toLocaleString('ko-KR', {
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    hour12: false,
-                  })
-                  .replace(/\.$/, '')}
-                &nbsp; 결제 완료
-              </>
-            )}
-          </Typography>
-        </Grid>
+    <Container className="drop-shadow-default">
+      <RowWrapper style={{ marginBottom: '4px' }}>
+        {item.order.order_status === 'cancel' ? (
+          <div style={{ fontSize: '13px', fontWeight: '500', color: '#EA4646' }}>주문 취소</div>
+        ) : (
+          <div style={{ fontSize: '13px', fontWeight: '400', color: 'var(--gray-40)' }}>
+            {new Date(item.order.created_at)
+              .toLocaleString('ko-KR', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false,
+              })
+              .replace(/\.$/, '')}
+            &nbsp; 결제 완료
+          </div>
+        )}
+        {item.order.order_status === 'cancel' ? (
+          <ShowMoreButton title="다시 주문하기" onClick={handleReorder} />
+        ) : (
+          <ShowMoreButton title="주문 상세" onClick={() => navigate(`/mypage/order/detail?order_id=${item.order_id}`)} />
+        )}
+      </RowWrapper>
 
-        <Grid item>
-          {item.order.order_status === 'cancel' ? (
-            <Typography sx={{ color: '#EA4646' }}>주문 취소</Typography>
-          ) : (
-            <Typography onClick={() => navigate(`/mypage/order/detail?order_id=${item.order_id}`)} sx={{ cursor: 'pointer' }}>
-              주문 상세 &gt;
-            </Typography>
-          )}
-        </Grid>
-      </Grid>
-
-      <Grid container spacing={2}>
-        <Grid item>
-          <ButtonBase sx={{ width: 100, height: 100 }}>
-            <img src={item.order.img_url_1} alt={item.order.order_title} style={{ width: 100, height: 100 }} />
-          </ButtonBase>
-        </Grid>
-
-        <Grid item xs={12} sm container sx={{ marginTop: '10px' }}>
-          <Grid item xs container direction="column" spacing={2}>
-            <Grid item xs>
-              <Typography gutterBottom variant="subtitle1" component="div" sx={{ cursor: 'pointer', fontWeight: 'bold' }}>
-                {item.order.order_title}
-              </Typography>
-
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                {item.order.total_count}개
-              </Typography>
-
-              {/* 주문 취소된 경우에만 재주문 버튼 표시 */}
-              {item.order.order_status === 'cancel' && <ReorderButton onClick={handleReorder}>재주문하기</ReorderButton>}
-
-              <Typography sx={{ cursor: 'pointer', fontWeight: 'bold' }}>{item.order.total_price.toLocaleString()}원</Typography>
-            </Grid>
-          </Grid>
-        </Grid>
-      </Grid>
-    </Paper>
+      <RowWrapper style={{ justifyContent: 'start', gap: '16px' }}>
+        <img src={item.order.img_url_1} alt={item.order.order_title} style={{ width: '80px', height: '80px', borderRadius: '8px' }} />
+        <div>
+          <div style={{ width: '100%', fontSize: '16px', fontWeight: '500' }}>{item.order.order_title}</div>
+          <div style={{ fontSize: '14px', fontWeight: '400', color: 'var(--gray-60)' }}>{item.order.total_count}개</div>
+          <div style={{ fontSize: '16px', fontWeight: '700', color: 'var(--gray-100)' }}>{item.order.total_price.toLocaleString()}원</div>
+        </div>
+      </RowWrapper>
+    </Container>
   );
 }

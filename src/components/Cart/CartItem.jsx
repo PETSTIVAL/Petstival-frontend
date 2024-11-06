@@ -4,15 +4,17 @@ import CartNumberPicker from '../ProductDetail/CartNumberPicker';
 import { useProductStore } from '../../stores/useProductStore';
 import styles from './CartItem.module.css';
 import Checkbox from '@mui/material/Checkbox';
+import noImage from '../../assets/images/no-image.jpg';
 
 const CartItem = ({ item, isSelected, onSelect }) => {
   const updateCartItem = useCartStore((state) => state.updateCartItem);
+  const fetchProducts = useProductStore((state) => state.fetchProducts);
   const getProductById = useProductStore((state) => state.getProductById); // 상품 정보를 가져오는 함수
 
   const [productDetails, setProductDetails] = useState({});
 
-  // 상품 정보를 불러와 productDetails에 설정
-  useEffect(() => {
+  const getProductInfo = async () => {
+    await fetchProducts();
     const product = getProductById(item.productId);
     if (product) {
       setProductDetails(product);
@@ -20,6 +22,11 @@ const CartItem = ({ item, isSelected, onSelect }) => {
     } else {
       console.log('Product not found for productId:', item.productId); // 디버깅용 콘솔 출력
     }
+  };
+
+  // 상품 정보를 불러와 productDetails에 설정
+  useEffect(() => {
+    getProductInfo();
   }, [item.productId, getProductById]);
 
   // 수량 변경 핸들러
@@ -50,7 +57,7 @@ const CartItem = ({ item, isSelected, onSelect }) => {
         />
         <div className={styles.contentWrapper}>
           {/* 상품 이미지 */}
-          <img className={styles.imageContainer} src={productDetails.image_url_1 || '/default-image.png'} alt={productDetails.product_name || 'Product'} />
+          <img className={styles.imageContainer} src={productDetails.image_url_1 || noImage} alt={productDetails.product_name || 'Product'} loading="lazy" />
 
           {/* 상품 정보 */}
           <div>

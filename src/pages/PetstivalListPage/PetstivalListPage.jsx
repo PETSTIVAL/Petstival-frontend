@@ -48,27 +48,27 @@ export default function PetstivalListPage() {
   const [error, setError] = useState(null);
   const [userId, setUserId] = useState(null);
   const navigate = useNavigate();
-  const [showConfirmationModal, setShowConfirmationModal] = useState(false); // YesNoModal 열림 상태
-  const [showResultModal, setShowResultModal] = useState(false); // DefaultModal 열림 상태
-  const [modalMessage, setModalMessage] = useState(''); // DefaultModal에 표시할 메시지
-  const [modalTitle, setModalTitle] = useState(''); // DefaultModal의 제목
-  const [selectedFestivalId, setSelectedFestivalId] = useState(null); // 참여 또는 취소할 페스티벌 ID
-  const [isParticipating, setIsParticipating] = useState(false); // 현재 참여 상태
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [showResultModal, setShowResultModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
+  const [modalTitle, setModalTitle] = useState('');
+  const [selectedFestivalId, setSelectedFestivalId] = useState(null);
+  const [isParticipating, setIsParticipating] = useState(false);
+  const [buttonLoading, setButtonLoading] = useState(true);
 
   useEffect(() => {
-    // 로그인된 사용자 ID 가져오기
     const fetchUser = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         setUserId(user.id); // 실제 user_id 설정
       }
+      fetchUser();
     };
-    fetchUser();
   }, []);
 
-  // 펫스티벌 데이터 가져오기 및 날짜별 정렬
+  // 전체 로딩 상태 확인
+  const isStatusLoaded = data.length > 0 && Object.keys(participationStatus).length === data.length;
+
   const getData = async () => {
     try {
       const { data, error } = await supabase.from('festivals').select();
@@ -77,10 +77,9 @@ export default function PetstivalListPage() {
       const sortedData = data.sort((a, b) => new Date(b.startdate) - new Date(a.startdate));
       setData(sortedData);
 
-      // 참여 상태 확인
       if (userId) {
         const status = {};
-        for (const festival of data) {
+        for (const festival of sortedData) {
           const { data: participationData } = await supabase
             .from('user_festival')
             .select('verified')
@@ -98,6 +97,7 @@ export default function PetstivalListPage() {
       setError('Error fetching data');
     } finally {
       setLoading(false);
+      setButtonLoading(false);
     }
   };
 
@@ -120,18 +120,16 @@ export default function PetstivalListPage() {
     }
   };
 
-  // 페스티벌 참여 및 취소 함수
   const handleParticipation = async (festivalId, currentStatus) => {
     if (!userId) {
       navigate('/login');
       return;
     }
-
     setSelectedFestivalId(festivalId); // 선택한 페스티벌 ID 저장
     setIsParticipating(currentStatus.isParticipating); // 현재 참여 상태 저장
     setModalTitle(currentStatus.isParticipating ? '신청을 취소하시겠습니까?' : '정말 신청하시겠습니까?');
     setModalMessage(currentStatus.isParticipating ? '참여를 취소하시겠습니까?' : '참여 신청을 하시겠습니까?');
-    setShowConfirmationModal(true); // 확인 모달 열기
+    setShowConfirmationModal(true);
   };
 
   const confirmParticipationChange = async () => {
@@ -140,7 +138,6 @@ export default function PetstivalListPage() {
 
     try {
       if (currentStatus.isParticipating) {
-        // 참여 취소
         const { error } = await supabase.from('user_festival').delete().eq('user_id', userId).eq('fetstivals_id', festivalId);
         if (error) throw error;
         setParticipationStatus((prev) => ({
@@ -149,7 +146,6 @@ export default function PetstivalListPage() {
         }));
         setModalMessage('신청이 취소되었습니다. 페스티벌 페이지로 이동하여 확인해보시겠어요?');
       } else {
-        // 참여 신청
         const { error } = await supabase.from('user_festival').insert({
           user_id: userId,
           fetstivals_id: festivalId,
@@ -163,17 +159,16 @@ export default function PetstivalListPage() {
         }));
         setModalMessage('참여 신청이 완료되었습니다. 페스티벌 페이지로 이동하여 확인해보시겠어요?');
       }
-      setShowResultModal(true); // YesNoModal 열기
+      setShowResultModal(true);
     } catch (error) {
       console.error('참여 상태 변경 중 오류 발생:', error);
     } finally {
-      setShowConfirmationModal(false); // 기존 확인 모달 닫기
+      setShowConfirmationModal(false);
     }
   };
-
   // 모달에서 예를 누르면 /pet 페이지로 이동하고, 계속 둘러볼게요를 선택하면 모달 닫기
   const handleResultModalConfirm = () => {
-    localStorage.setItem('activeTab', '펫스티벌'); // 기본 탭을 '펫스티벌'로 설정
+    localStorage.setItem('activeTab', '펫스티벌');
     navigate('/pet');
   };
 
@@ -194,7 +189,7 @@ export default function PetstivalListPage() {
               const { label, color } = getStatus(item.startdate, item.enddate);
               const imageSrc = item.firstimage || noImage;
               const participation = participationStatus[item.id] || {};
-              const buttonLabel = participation.verified ? '참여 완료' : participation.isParticipating ? '신청 취소' : '참여 신청';
+              const buttonLabel = buttonLoading ? '로딩 중...' : participation.verified ? '참여 완료' : participation.isParticipating ? '신청 취소' : '참여 신청';
 
               return (
                 <Paper
@@ -209,7 +204,6 @@ export default function PetstivalListPage() {
                 >
                   <ImageListItem onClick={() => navigate(`/petstival/${item.id}`)} style={{ cursor: 'pointer' }}>
                     <img
-                      // srcSet={`${imageSrc}?w=248&fit=crop&auto=format&dpr=2 2x`}
                       src={`${imageSrc}?w=248&fit=crop&auto=format`}
                       alt={item.title || 'No image available'}
                       style={{ borderRadius: '8px', border: '1px solid var(--gray-20)', marginBottom: '8px' }}
@@ -248,7 +242,7 @@ export default function PetstivalListPage() {
                       position="below"
                     />
                   </ImageListItem>
-                  {(label !== '진행완료' || participation.verified) && (
+                  {(label !== '진행완료' || participation.verified) && isStatusLoaded && (
                     <ButtonSmall
                       children={buttonLabel}
                       onClick={() => handleParticipation(item.id, participation)}

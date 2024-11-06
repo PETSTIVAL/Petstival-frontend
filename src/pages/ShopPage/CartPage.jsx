@@ -17,10 +17,31 @@ const Container = styled.div`
   height: 100%;
 `;
 
-const Wrapper = styled.section`
-  height: 100%;
+const Wrapper = styled.div`
+  height: calc(100% - 48px);
   overflow-y: auto;
-  padding: 24px 0;
+  padding: 24px 0 40px 0;
+`;
+
+const Button = styled.button`
+  width: calc(100% - 64px);
+  height: 64px;
+  margin: 32px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  background-color: var(--primary-default);
+  color: var(--white);
+  cursor: pointer;
+
+  &:active {
+    background-color: var(--primary-darken);
+  }
+
+  &:disabled {
+    background-color: var(--gray-20);
+    color: var(--gray-60);
+  }
 `;
 
 const CartPage = () => {
@@ -134,8 +155,10 @@ const CartPage = () => {
             <div style={{ fontSize: '24px', fontWeight: '700', color: 'var(--secondary-orange-default)' }}>{selectedTotal.toLocaleString()}원</div>
           </div>
         </div>
+        <Button sub={'primary'} disabled={!cartItems || cartItems.length === 0} onClick={handleOrderButtonClick}>
+          주문하기
+        </Button>
       </Wrapper>
-      <ButtonLarge children={'구매하기'} sub={'primary'} disabled={!cartItems || cartItems.length === 0} onClick={handleOrderButtonClick} />
     </Container>
   );
 };

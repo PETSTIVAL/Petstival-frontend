@@ -36,8 +36,12 @@ export default function MyOrder() {
   const user = useAuthStore((state) => state.user);
 
   const getSuccessData = async () => {
-    // payment 테이블에서 payment_state가 success인 데이터만 order 테이블의 정보를 가져옴
-    const { data, error } = await supabase.from('payment').select('order_id, order(*)').eq('payment_state', 'success');
+    // payment 테이블에서 payment_state가 success인 데이터만 order 테이블의 정보를 날짜순으로 가져옴
+    const { data, error } = await supabase
+      .from('payment')
+      .select('order_id, order(*)')
+      .eq('payment_state', 'success')
+      .order('created_at', { ascending: false });
 
     if (error) {
       console.error('Error fetching data:', error);

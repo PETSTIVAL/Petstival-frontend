@@ -31,8 +31,12 @@ export default function MyOrder() {
   const user = useAuthStore((state) => state.user);
 
   const getSuccessData = async () => {
-    // payment 테이블에서 payment_state가 success인 데이터만 order 테이블의 정보를 가져옴
-    const { data, error } = await supabase.from('payment').select('order_id, order(*)').eq('payment_state', 'success');
+    // payment 테이블에서 payment_state가 success인 데이터만 order 테이블의 정보를 날짜순으로 가져옴
+    const { data, error } = await supabase
+        .from('payment')
+        .select('order_id, order(*)')
+        .eq('payment_state', 'success')
+        .order('created_at', { ascending: false });
 
     if (error) {
       console.error('Error fetching data:', error);
@@ -83,11 +87,11 @@ export default function MyOrder() {
             >
               <Grid item>
                 <Typography variant="body2" component="div">
-                  {successProduct[successProduct.length - 1].order.order_status === 'cancel' ? (
+                  {successProduct[0].order.order_status === 'cancel' ? (
                     <Typography></Typography>
                   ) : (
                     <>
-                      {new Date(successProduct[successProduct.length - 1].order.created_at)
+                      {new Date(successProduct[0].order.created_at)
                         .toLocaleString('ko-KR', {
                           year: 'numeric',
                           month: '2-digit',
@@ -104,11 +108,11 @@ export default function MyOrder() {
               </Grid>
 
               <Grid item>
-                {successProduct[successProduct.length - 1].order.order_status === 'cancel' ? (
+                {successProduct[0].order.order_status === 'cancel' ? (
                   <Typography sx={{ color: '#EA4646' }}>주문 취소</Typography>
                 ) : (
                   <Typography
-                    onClick={() => navigate(`/mypage/order/detail?order_id=${successProduct[successProduct.length - 1].order_id}`)}
+                    onClick={() => navigate(`/mypage/order/detail?order_id=${successProduct[0].order_id}`)}
                     sx={{ cursor: 'pointer' }}
                   >
                     주문 상세 &gt;
@@ -121,8 +125,8 @@ export default function MyOrder() {
               <Grid item>
                 <ButtonBase sx={{ width: 100, height: 100 }}>
                   <img
-                    src={successProduct[successProduct.length - 1].order.img_url_1}
-                    alt={successProduct[successProduct.length - 1].order.order_title}
+                    src={successProduct[0].order.img_url_1}
+                    alt={successProduct[0].order.order_title}
                     style={{ width: 100, height: 100 }}
                   />
                 </ButtonBase>
@@ -132,15 +136,15 @@ export default function MyOrder() {
                 <Grid item xs container direction="column" spacing={2}>
                   <Grid item xs>
                     <Typography gutterBottom variant="subtitle1" component="div" sx={{ cursor: 'pointer', fontWeight: 'bold' }}>
-                      {successProduct[successProduct.length - 1].order.order_title}
+                      {successProduct[0].order.order_title}
                     </Typography>
 
                     <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                      {successProduct[successProduct.length - 1].order.total_count}개
+                      {successProduct[0].order.total_count}개
                     </Typography>
 
                     <Typography sx={{ cursor: 'pointer', fontWeight: 'bold' }}>
-                      {successProduct[successProduct.length - 1].order.total_price.toLocaleString()}원
+                      {successProduct[0].order.total_price.toLocaleString()}원
                     </Typography>
                   </Grid>
                 </Grid>

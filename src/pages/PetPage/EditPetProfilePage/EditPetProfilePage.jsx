@@ -21,15 +21,10 @@ function EditPetProfilePage() {
   const { petId } = useParams();
   const { petData } = location.state || {};
 
-  const {
-    petProfileData,
-    setPetProfileData,
-    validatePetProfile,
-    errorMsg,
-  } = usePetProfileForm();
+  const { petProfileData, setPetProfileData, validatePetProfile, errorMsg } = usePetProfileForm();
 
   const [suggestions, setSuggestions] = useState([]);
-  const [inputValue, setInputValue] = useState(petData.breed || "");
+  const [inputValue, setInputValue] = useState(petData.breed || '');
   const [focusIndex, setFocusIndex] = useState(-1);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
@@ -61,15 +56,12 @@ function EditPetProfilePage() {
 
   const fetchBreeds = async (query) => {
     if (!query) return;
-    const { data, error } = await supabase
-      .from('breeds')
-      .select('name')
-      .ilike('name', `%${query}%`);
+    const { data, error } = await supabase.from('breeds').select('name').ilike('name', `%${query}%`);
 
     if (error) {
-      console.error("Error fetching breeds:", error);
+      console.error('Error fetching breeds:', error);
     } else {
-      setSuggestions(data.map(breed => breed.name));
+      setSuggestions(data.map((breed) => breed.name));
       const matchedIndex = data.findIndex((breed) => breed.name === inputValue);
       if (matchedIndex !== -1) {
         setFocusIndex(matchedIndex);
@@ -78,7 +70,7 @@ function EditPetProfilePage() {
   };
 
   useEffect(() => {
-    if (!isTyping || inputValue.trim() === "") {
+    if (!isTyping || inputValue.trim() === '') {
       setSuggestions([]);
       return;
     }
@@ -101,11 +93,11 @@ function EditPetProfilePage() {
   };
 
   const handleKeyUp = (e) => {
-    if (e.key === "ArrowDown") {
+    if (e.key === 'ArrowDown') {
       setFocusIndex((prev) => (prev + 1) % suggestions.length);
-    } else if (e.key === "ArrowUp") {
+    } else if (e.key === 'ArrowUp') {
       setFocusIndex((prev) => (prev === 0 ? suggestions.length - 1 : prev - 1));
-    } else if (e.key === "Enter" && focusIndex >= 0) {
+    } else if (e.key === 'Enter' && focusIndex >= 0) {
       setPetProfileData((prev) => ({
         ...prev,
         breed: suggestions[focusIndex],
@@ -114,7 +106,7 @@ function EditPetProfilePage() {
       setSuggestions([]);
       setFocusIndex(-1);
       setIsTyping(false); // Stop typing
-    } else if (e.key === "Escape") {
+    } else if (e.key === 'Escape') {
       setSuggestions([]);
       setFocusIndex(-1);
     }
@@ -157,9 +149,7 @@ function EditPetProfilePage() {
                 <UploadProfileButton
                   petName={petProfileData.pet_name}
                   profileUrl={petProfileData.profile_url}
-                  setData={(data) =>
-                    setPetProfileData((prev) => ({ ...prev, profile_url: data }))
-                  }
+                  setData={(data) => setPetProfileData((prev) => ({ ...prev, profile_url: data }))}
                 />
               </div>
               {/* 이름 */}
@@ -237,39 +227,31 @@ function EditPetProfilePage() {
               </div>
               {/* 견종 */}
               <div className={styles.fieldContainer}>
-      <div className={styles.label}>견종</div>
-      <Input
-        type="text"
-        value={inputValue}
-        placeholder="견종을 입력하세요"
-        setData={handleInputChange}
-        onKeyUp={handleKeyUp}
-      />
-      {suggestions.length > 0 && (
-        <ul className={styles.suggestionsList}>
-          {suggestions.map((breed, index) => (
-            <li
-              key={index}
-              onClick={() => {
-                setPetProfileData((prev) => ({
-                  ...prev,
-                  breed,
-                }));
-                setInputValue(breed);
-                setSuggestions([]);
-                setIsTyping(false); // Stop typing
-              }}
-              className={`${styles.suggestionItem} ${
-                index === focusIndex ? styles.active : ''
-              }`}
-            >
-              {breed}
-            </li>
-          ))}
-        </ul>
-      )}
-      <div className={styles.errorMsg}>{errorMsg.breed}</div>
-    </div>
+                <div className={styles.label}>견종</div>
+                <Input type="text" value={inputValue} placeholder="견종을 입력하세요" setData={handleInputChange} onKeyUp={handleKeyUp} />
+                {suggestions.length > 0 && (
+                  <ul className={styles.suggestionsList}>
+                    {suggestions.map((breed, index) => (
+                      <li
+                        key={index}
+                        onClick={() => {
+                          setPetProfileData((prev) => ({
+                            ...prev,
+                            breed,
+                          }));
+                          setInputValue(breed);
+                          setSuggestions([]);
+                          setIsTyping(false); // Stop typing
+                        }}
+                        className={`${styles.suggestionItem} ${index === focusIndex ? styles.active : ''}`}
+                      >
+                        {breed}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                <div className={styles.errorMsg}>{errorMsg.breed}</div>
+              </div>
               {/* 성별 */}
               <div className={styles.fieldContainer}>
                 <div className={styles.label}>성별</div>

@@ -35,6 +35,11 @@ export default function MyAccount() {
   const [isFailedModalOpen, setIsFailedModalOpen] = useState(false);
   const [modalType, setModalType] = useState('');
 
+  const handleConfirmModalOpen = (modalType) => {
+    setModalType(modalType);
+    setIsConfirmModalOpen(true);
+  };
+
   const handleLogout = async () => {
     try {
       await logout(); // 로그아웃 함수 호출
@@ -65,8 +70,8 @@ export default function MyAccount() {
     <div>
       <h1 style={{ marginBottom: '12px' }}>계정 관리</h1>
       <Container className="drop-shadow-default">
-        <TextButton onClick={handleLogout}>로그아웃</TextButton>
-        <TextButton onClick={handleDelete}>회원탈퇴</TextButton>
+        <TextButton onClick={() => handleConfirmModalOpen('로그아웃')}>로그아웃</TextButton>
+        <TextButton onClick={() => handleConfirmModalOpen('회원탈퇴')}>회원탈퇴</TextButton>
       </Container>
       <YesNoModal
         title={`${modalType} 확인`}

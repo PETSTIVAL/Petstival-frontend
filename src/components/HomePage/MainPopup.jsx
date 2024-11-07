@@ -1,6 +1,7 @@
 import styles from './MainPopup.module.css';
 import QR from '../../assets/images/QR.svg?react';
 import { useNavigate } from 'react-router-dom';
+import CloseIcon from '../../assets/icons/cancel.svg?react';
 export default function MainPopup({ setShowMainPop }) {
   const navigate = useNavigate();
   const closePop = () => {
@@ -20,18 +21,23 @@ export default function MainPopup({ setShowMainPop }) {
       closePop();
     }
   };
-  const handleQRScanner = () =>{
+  const handleQRScanner = () => {
     navigate('/qrscanner');
-  }
+  };
 
   return (
     <div className={styles.popupWrapper} onClick={handleClickOutside}>
       {/* 팝업 내부 클릭이 래퍼로 버블링되는 것을 방지하여 팝업이 내부를 클릭할 때 열린 상태를 유지 */}
       <div className={styles.mainPopup} onClick={(e) => e.stopPropagation()}>
-        <QR className={styles.qr} onClick={handleQRScanner}/>
+        <QR className={styles.qr} onClick={handleQRScanner} />
         <div className={styles.close}>
-          <button onClick={closeTodayPop}>X 오늘 하루 열지 않기</button>
-          <button onClick={closePop}>닫기</button>
+          <div className={styles.textButton} onClick={closeTodayPop}>
+            <CloseIcon />
+            <div>오늘 하루 열지 않기</div>
+          </div>
+          <div className={styles.textButton} onClick={closePop}>
+            닫기
+          </div>
         </div>
       </div>
     </div>

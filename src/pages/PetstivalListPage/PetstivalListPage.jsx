@@ -60,11 +60,17 @@ export default function PetstivalListPage() {
     const fetchUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        setUserId(user.id); // 실제 user_id 설정
+        setUserId(user.id);
       }
-      fetchUser();
     };
+    fetchUser();
   }, []);
+  
+  useEffect(() => {
+    if (userId) {
+      getData();
+    }
+  }, [userId]);
 
   // 전체 로딩 상태 확인
   const isStatusLoaded = data.length > 0 && Object.keys(participationStatus).length === data.length;

@@ -1,0 +1,24 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.petProfileIcon {
+  width: 200px;
+  height: 200px;
+  position: relative;
+}
+
+.profileImg {
+  width: 200px;
+  height: 200px;
+  border-radius: 100px;
+  object-fit: cover;
+}
+
+.cameraIcon {
+  position: absolute;
+  bottom: 12px;
+  right: 0;
+}

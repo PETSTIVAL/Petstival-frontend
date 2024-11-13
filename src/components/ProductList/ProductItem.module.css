@@ -1,0 +1,36 @@
+/* ProductItem.module.css*/
+.item {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: start;
+  margin-bottom: 20px;
+}
+
+.productImage {
+  width: 100%;
+  aspect-ratio: 1 / 1; /* 정사각형 비율로 설정 */
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.productTitle {
+  width: 100%;
+  color: var(--gray-gray-100, #222022);
+  font-size: 16px;
+  font-weight: 500;
+  text-align: start;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  /* 링크 스타일을 없애기 위해 추가 */
+  text-decoration: none;
+}
+
+.productPrice {
+  color: var(--secondary-secondary-orange-default, #ff866b);
+  font-size: 16px;
+  font-weight: 700;
+  text-align: center;
+}

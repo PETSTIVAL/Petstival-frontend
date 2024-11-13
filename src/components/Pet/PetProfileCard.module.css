@@ -1,0 +1,47 @@
+.container {
+  width: 100%;
+  padding: 24px 32px;
+
+  border-radius: 8px;
+  background-color: var(--white);
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  align-items: center;
+  gap: 24px;
+}
+
+.contentRowWrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.nameContent {
+  font-family: 'NanumSquareNeoExtraBold';
+  font-size: 16px;
+  color: var(--gray-100);
+}
+
+.breedContent {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--gray-40);
+}
+
+.birthContent {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--gray-60);
+}
+
+.profileImg {
+  width: 80px;
+  height: 80px;
+  border-radius: 80px;
+  object-fit: cover;
+}

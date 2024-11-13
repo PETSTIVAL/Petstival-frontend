@@ -1,0 +1,122 @@
+/* CartPage.module.css */
+.orderItemList {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 8px;
+  align-self: stretch;
+  border-bottom: 1px solid var(--gray-gray-10, #f5f5f5);
+  background: #fff;
+  padding: 24px;
+}
+
+.itemWrapper {
+  display: flex;
+  height: 48px; /* 아이템 높이 /
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0; / 크기 축소 방지 */
+  align-self: stretch;
+}
+
+.textWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex: 1 0 0; /* 유연한 크기 조절 */
+}
+
+.labelText {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gray-60);
+}
+
+.titleText {
+  overflow: hidden;
+  color: var(--gray-gray-100, #222022);
+  text-overflow: ellipsis;
+
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 22px; /* 157.143% */
+}
+
+.priceText {
+  color: var(--gray-gray-100, #222022); /* 가격 색상 설정 */
+  font-family: Pretendard;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.cartContainer {
+  max-width: 500px;
+  height: 100svh;
+  flex-shrink: 0;
+  background: #fff;
+  box-shadow: 0px 0px 8px 0px rgba(51, 51, 51, 0.08);
+  text-align: left;
+  padding: 24px;
+  margin: 0 auto;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 24px; /* 24px 여백 추가 */
+  color: var(--gray-gray-100, #222022);
+}
+
+.itemList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px; /* 항목 간 간격 */
+}
+
+.purchaseButton {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #007bff; /* 버튼 색상 /
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s; / 호버 애니메이션 */
+}
+
+.purchaseButton:hover {
+  background-color: #0056b3; /* 호버 시 색상 변화 */
+}
+
+.selectAllContainer {
+  width: 100%; /* 가로로 꽉 차게 설정 */
+  display: flex;
+  align-items: row;
+  justify-content: space-between; /* 왼쪽과 오른쪽 끝으로 배치 */
+  align-items: center;
+}
+
+.checkbox {
+  margin-right: 8px; /* 체크박스와 텍스트 간의 간격 */
+}
+
+.deleteLink {
+  background: none;
+  border: none;
+  color: var(--gray-gray-60, #838283);
+  cursor: pointer;
+}
+
+.deleteButton {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--gray-40);
+}
+
+.totalContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: end;
+  padding: 32px 12px 12px 12px;
+}

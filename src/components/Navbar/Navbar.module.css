@@ -1,0 +1,28 @@
+.NavbarLayout {
+  display: flex;
+  width: 100%;
+  position: sticky;
+  bottom: 0;
+  height: 80px;
+  padding: 24px 40px;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  box-shadow: 0px -2px 8px 0px rgba(24, 119, 242, 0.06);
+}
+
+.NavBarBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+
+  color: var(--gray-60);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.NavBarBtnSelected {
+  color: var(--primary-default);
+  font-weight: 700;
+}

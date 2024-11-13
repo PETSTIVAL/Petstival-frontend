@@ -1,0 +1,41 @@
+.genderRadioWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.inputWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.autoCompleteWrapper {
+  position: relative;
+}
+
+.suggestionsList {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: 160px;
+  overflow-y: auto;
+  background-color: white;
+  z-index: 10;
+  list-style: none;
+  margin-top: 2px;
+  padding: 20px 0;
+  border-radius: 8px;
+}
+
+.suggestionItem {
+  padding: 12px 32px;
+  cursor: pointer;
+  color: var(--gray-60);
+}
+
+.suggestionItem:hover {
+  color: var(--gray-100);
+  background-color: var(--gray-10);
+}

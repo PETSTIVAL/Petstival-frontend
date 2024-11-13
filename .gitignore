@@ -23,4 +23,12 @@ dist-ssr
 *.sln
 *.sw?
 
+# API Key
+.env
+
+# Storybook
 *storybook.log
+
+# TLS key file
+localhost-key.pem
+localhost.pem
